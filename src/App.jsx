@@ -206,6 +206,44 @@ export default function App() {
 
     link.click();
   };
+  const saveToSheet = async () => {
+
+    const payload = {
+  
+      items: items.map(item => ({
+  
+        name: item.name,
+  
+        size: item.size,
+  
+        qty: item.qty,
+  
+        price: item.price
+  
+      }))
+  
+    };
+  
+    try {
+  
+      await fetch(
+        "https://script.google.com/macros/s/AKfycbz5BRru4RrYt_wAy45HSFlQsiM83g-3vXoyiGt5pB7Zu464Br8iuD8QIDPk5O3FaruX/exec",
+        {
+  
+          method: "POST",
+  
+          body: JSON.stringify(payload),
+  
+        }
+      );
+  
+      alert("บันทึกลง Sheet สำเร็จ");
+  
+    } catch (err) {
+  
+      alert("เกิดข้อผิดพลาด");
+    }
+  };
 
   // =========================
   // EMPTY ROWS
@@ -244,13 +282,14 @@ export default function App() {
             >
               Save PNG
             </button>
-
             <button
-              className="bg-white/20 px-4 py-2 rounded-xl w-full sm:w-auto"
-              onClick={printPage}
-            >
-              พิมพ์
-            </button>
+  className="bg-green-500 px-4 py-2 rounded-xl text-white"
+  onClick={saveToSheet}
+>
+  Save Sheet
+</button>
+
+
 
           </div>
 
