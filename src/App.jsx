@@ -56,8 +56,8 @@ export default function App() {
     {
       name: "",
       size: "",
-      qty: 1,
-      price: 0,
+      qty: "",
+      price: "",
       suggestions: [],
     },
   ]);
@@ -67,13 +67,14 @@ export default function App() {
   // =========================
 
   const addItem = () => {
+
     setItems([
       ...items,
       {
         name: "",
         size: "",
-        qty: 1,
-        price: 0,
+        qty: "",
+        price: "",
         suggestions: [],
       },
     ]);
@@ -106,25 +107,30 @@ export default function App() {
 
     newItems[index][field] = value;
 
-    // SEARCH SUGGESTION
+    // SEARCH SUGGESTIONS
+
     if (field === "name") {
 
       if (value.trim() !== "") {
 
-        const matches = productSuggestions
-          .filter((item) =>
-            item
-              .toLowerCase()
-              .includes(value.toLowerCase())
-          )
-          .slice(0, 3);
+        const matches =
+          productSuggestions
+            .filter((item) =>
+              item
+                .toLowerCase()
+                .includes(
+                  value.toLowerCase()
+                )
+            )
+            .slice(0, 3);
 
-        newItems[index].suggestions =
-          matches;
+        newItems[index]
+          .suggestions = matches;
 
       } else {
 
-        newItems[index].suggestions = [];
+        newItems[index]
+          .suggestions = [];
       }
     }
 
@@ -155,7 +161,11 @@ export default function App() {
 
   const total = items.reduce(
     (sum, item) =>
-      sum + item.qty * item.price,
+      sum +
+      (
+        Number(item.qty || 0) *
+        Number(item.price || 0)
+      ),
     0
   );
 
@@ -210,35 +220,39 @@ export default function App() {
 
       {/* HEADER */}
 
-      <div className="bg-gradient-to-r from-purple-700 to-blue-600 text-white px-6 py-4 flex justify-between items-center shadow-lg">
+      <div className="bg-gradient-to-r from-purple-700 to-blue-600 text-white p-4 md:px-6 md:py-5 shadow-lg">
 
-        <div>
+        <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
 
-          <h1 className="text-3xl font-bold">
-            DR INKJET PRINT
-          </h1>
+          <div>
 
-          <p className="opacity-80">
-            ระบบใบสั่งซื้อสินค้า
-          </p>
+            <h1 className="text-2xl md:text-3xl font-bold">
+              DR INKJET PRINT
+            </h1>
 
-        </div>
+            <p className="opacity-80 text-sm md:text-base">
+              ระบบใบสั่งซื้อสินค้า
+            </p>
 
-        <div className="flex gap-3">
+          </div>
 
-          <button
-            className="bg-white/20 px-4 py-2 rounded-xl"
-            onClick={saveImage}
-          >
-            Save PNG
-          </button>
+          <div className="flex flex-wrap gap-2 w-full md:w-auto">
 
-          <button
-            className="bg-white/20 px-4 py-2 rounded-xl"
-            onClick={printPage}
-          >
-            พิมพ์
-          </button>
+            <button
+              className="bg-white/20 px-4 py-2 rounded-xl w-full sm:w-auto"
+              onClick={saveImage}
+            >
+              Save PNG
+            </button>
+
+            <button
+              className="bg-white/20 px-4 py-2 rounded-xl w-full sm:w-auto"
+              onClick={printPage}
+            >
+              พิมพ์
+            </button>
+
+          </div>
 
         </div>
 
@@ -246,15 +260,17 @@ export default function App() {
 
       {/* CONTENT */}
 
-      <div className="p-6 grid lg:grid-cols-2 gap-6">
+      <div className="p-3 md:p-6 grid xl:grid-cols-2 gap-6">
 
-        {/* LEFT SIDE */}
+        {/* LEFT */}
 
-        <div className="bg-white rounded-3xl shadow-xl p-6">
+        <div className="bg-white rounded-3xl shadow-xl p-4 md:p-6">
 
-          <h2 className="text-2xl font-bold mb-6 text-purple-700">
+          <h2 className="text-xl md:text-2xl font-bold mb-6 text-purple-700">
             สร้างใบสั่งซื้อสินค้า
           </h2>
+
+          {/* CUSTOMER */}
 
           <div className="space-y-4">
 
@@ -265,7 +281,7 @@ export default function App() {
               onChange={(e) =>
                 setCustomer(e.target.value)
               }
-              className="w-full border p-4 rounded-xl"
+              className="w-full border p-3 md:p-4 rounded-xl"
             />
 
             <input
@@ -275,7 +291,7 @@ export default function App() {
               onChange={(e) =>
                 setPhone(e.target.value)
               }
-              className="w-full border p-4 rounded-xl"
+              className="w-full border p-3 md:p-4 rounded-xl"
             />
 
             <input
@@ -285,110 +301,88 @@ export default function App() {
               onChange={(e) =>
                 setTaxId(e.target.value)
               }
-              className="w-full border p-4 rounded-xl"
+              className="w-full border p-3 md:p-4 rounded-xl"
             />
-              <input
-              type="text"
+
+            <textarea
               placeholder="หมายเหตุ"
               value={note}
               onChange={(e) =>
                 setNote(e.target.value)
               }
-              className="w-full border p-4 rounded-xl"
+              className="w-full border p-3 md:p-4 rounded-xl min-h-[120px]"
             />
 
           </div>
 
-          {/* INPUT TABLE */}
+          {/* ITEMS */}
 
-          <div className="mt-8">
+          <div className="mt-8 space-y-4">
 
-            <div className="grid grid-cols-12 gap-3 bg-gradient-to-r from-purple-700 to-blue-600 text-white p-4 rounded-t-2xl text-center font-semibold">
+            {items.map((item, index) => (
 
-              <div className="col-span-4">
-                รายการ
-              </div>
+              <div
+                key={index}
+                className="border rounded-2xl p-4 bg-gray-50"
+              >
 
-              <div className="col-span-2">
-                ขนาด
-              </div>
+                {/* PRODUCT */}
 
-              <div className="col-span-2">
-                จำนวน
-              </div>
+                <div className="relative">
 
-              <div className="col-span-2">
-                ราคา
-              </div>
+                  <input
+                    className="border p-3 rounded-xl w-full"
+                    placeholder="รายละเอียดสินค้า"
+                    value={item.name}
+                    onChange={(e) =>
+                      updateItem(
+                        index,
+                        "name",
+                        e.target.value
+                      )
+                    }
+                  />
 
-              <div className="col-span-2">
-                รวม
-              </div>
+                  {/* SUGGESTIONS */}
 
-            </div>
+                  {item.suggestions.length > 0 && (
 
-            <div className="border border-t-0 rounded-b-2xl p-4 space-y-3">
+                    <div className="absolute z-50 bg-white border rounded-xl shadow-xl mt-1 w-full overflow-hidden">
 
-              {items.map((item, index) => (
+                      {item.suggestions.map(
+                        (suggest, i) => (
 
-                <div
-                  key={index}
-                  className="grid grid-cols-12 gap-3 relative"
-                >
+                          <div
+                            key={i}
+                            className="px-4 py-3 hover:bg-purple-100 cursor-pointer"
+                            onClick={() =>
+                              selectSuggestion(
+                                index,
+                                suggest
+                              )
+                            }
+                          >
+                            {suggest}
+                          </div>
 
-                  {/* NAME */}
-
-                  <div className="col-span-4 relative">
-
-                    <input
-                      className="border p-3 rounded-xl w-full"
-                      placeholder="รายละเอียด"
-                      value={item.name}
-                      onChange={(e) =>
-                        updateItem(
-                          index,
-                          "name",
-                          e.target.value
                         )
-                      }
-                    />
+                      )}
 
-                    {/* SUGGESTION */}
+                    </div>
 
-                    {item.suggestions.length > 0 && (
+                  )}
 
-                      <div className="absolute z-50 bg-white border rounded-xl shadow-xl mt-1 w-full overflow-hidden">
+                </div>
 
-                        {item.suggestions.map(
-                          (suggest, i) => (
+                {/* DETAIL */}
 
-                            <div
-                              key={i}
-                              className="px-4 py-2 hover:bg-purple-100 cursor-pointer"
-                              onClick={() =>
-                                selectSuggestion(
-                                  index,
-                                  suggest
-                                )
-                              }
-                            >
-                              {suggest}
-                            </div>
-
-                          )
-                        )}
-
-                      </div>
-
-                    )}
-
-                  </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
 
                   {/* SIZE */}
 
                   <input
                     type="text"
-                    className="col-span-2 border p-3 rounded-xl"
+                    className="border p-3 rounded-xl"
                     placeholder="ขนาด"
                     value={item.size}
                     onChange={(e) =>
@@ -404,14 +398,14 @@ export default function App() {
 
                   <input
                     type="number"
-                    className="col-span-2 border p-3 rounded-xl"
+                    className="border p-3 rounded-xl"
                     placeholder="จำนวน"
                     value={item.qty}
                     onChange={(e) =>
                       updateItem(
                         index,
                         "qty",
-                        Number(e.target.value)
+                        e.target.value
                       )
                     }
                   />
@@ -420,64 +414,71 @@ export default function App() {
 
                   <input
                     type="number"
-                    className="col-span-2 border p-3 rounded-xl"
-                    placeholder="ราคา"
+                    className="border p-3 rounded-xl"
+                    placeholder="ราคา/หน่วย"
                     value={item.price}
                     onChange={(e) =>
                       updateItem(
                         index,
                         "price",
-                        Number(e.target.value)
+                        e.target.value
                       )
                     }
                   />
 
                   {/* TOTAL */}
 
-                  <div className="col-span-2 flex items-center justify-between bg-gray-100 rounded-xl px-4">
+                  <div className="bg-white border rounded-xl flex items-center justify-between px-4">
 
-                    <div>
-                      {item.qty * item.price}
+                    <div className="font-bold">
+
+                      {
+                        Number(item.qty || 0) *
+                        Number(item.price || 0)
+                      }
+
                     </div>
 
                     <button
-                      className="text-red-500"
+                      className="text-red-500 text-xl"
                       onClick={() =>
                         removeItem(index)
                       }
                     >
-                      ✕
+                      ×
                     </button>
 
                   </div>
 
                 </div>
 
-              ))}
+              </div>
 
-              <button
-                className="w-full border-2 border-dashed border-purple-400 p-3 rounded-xl text-purple-700"
-                onClick={addItem}
-              >
-                + เพิ่มรายการสินค้า
-              </button>
+            ))}
 
-            </div>
+            {/* ADD ITEM */}
+
+            <button
+              className="w-full border-2 border-dashed border-purple-400 p-4 rounded-xl text-purple-700"
+              onClick={addItem}
+            >
+              + เพิ่มรายการสินค้า
+            </button>
 
           </div>
 
         </div>
 
-        {/* RIGHT SIDE */}
+        {/* RIGHT */}
 
-        <div className="bg-white rounded-3xl shadow-xl p-6">
+        <div className="bg-white rounded-3xl shadow-xl p-2 md:p-6 overflow-auto">
 
           <div
             id="invoice"
-            className="bg-white p-8 rounded-3xl"
+            className="bg-white p-4 md:p-8 rounded-3xl min-w-[800px]"
           >
 
-            {/* HEADER */}
+            {/* TOP */}
 
             <div className="flex justify-between items-start">
 
@@ -485,11 +486,11 @@ export default function App() {
 
                 <img
                   src="src/assets/img/5.png"
-                  width="180"
+                  width="160"
                   alt=""
                 />
 
-                <div className="mt-4 text-[20px] leading-9">
+                <div className="mt-4 text-[18px] leading-8">
 
                   ดีอาร์ อิงค์เจ็ท ปริ้นซ์
                   <br />
@@ -512,7 +513,7 @@ export default function App() {
                   ใบสั่งซื้อสินค้า
                 </div>
 
-                <div className="mt-6 text-xl">
+                <div className="mt-5 text-xl">
                   วันที่{" "}
                   {new Date().toLocaleDateString()}
                 </div>
@@ -545,7 +546,7 @@ export default function App() {
 
             <div className="mt-10 border-2 border-black rounded-[30px] overflow-hidden">
 
-              {/* TABLE HEADER */}
+              {/* HEADER */}
 
               <div className="grid grid-cols-12 bg-[#2B2B2B] text-white font-bold text-lg">
 
@@ -571,78 +572,68 @@ export default function App() {
 
               </div>
 
-              {/* BODY */}
+              {/* ROWS */}
 
-              <div>
+              {[
 
-                {/* DATA ROW */}
+                ...items,
 
-                {items.map((item, index) => (
-
-                  <div
-                    key={index}
-                    className="grid grid-cols-12 min-h-[65px] border-t border-black text-lg"
-                  >
-
-                    <div className="col-span-5 border-r border-black p-3 break-words">
-                      {item.name}
-                    </div>
-
-                    <div className="col-span-2 border-r border-black p-3 text-center">
-                      {item.size}
-                    </div>
-
-                    <div className="col-span-2 border-r border-black p-3 text-center">
-                      {item.qty}
-                    </div>
-
-                    <div className="col-span-2 border-r border-black p-3 text-center">
-                      {item.price}
-                    </div>
-
-                    <div className="col-span-1 p-3 text-center">
-                      {item.qty * item.price}
-                    </div>
-
-                  </div>
-
-                ))}
-
-                {/* EMPTY ROWS */}
-
-                {Array.from({
+                ...Array.from({
                   length:
                     emptyRows > 0
                       ? emptyRows
                       : 0,
-                }).map((_, index) => (
+                }).fill({
+                  name: "",
+                  size: "",
+                  qty: "",
+                  price: "",
+                }),
 
-                  <div
-                    key={index}
-                    className="grid grid-cols-12 min-h-[65px] border-t border-black"
-                  >
+              ].map((item, index) => (
 
-                    <div className="col-span-5 border-r border-black"></div>
+                <div
+                  key={index}
+                  className="grid grid-cols-12 min-h-[60px] border-t border-black text-lg"
+                >
 
-                    <div className="col-span-2 border-r border-black"></div>
+                  <div className="col-span-5 border-r border-black p-3 break-words">
+                    {item.name}
+                  </div>
 
-                    <div className="col-span-2 border-r border-black"></div>
+                  <div className="col-span-2 border-r border-black p-3 text-center">
+                    {item.size}
+                  </div>
 
-                    <div className="col-span-2 border-r border-black"></div>
+                  <div className="col-span-2 border-r border-black p-3 text-center">
+                    {item.qty}
+                  </div>
 
-                    <div className="col-span-1"></div>
+                  <div className="col-span-2 border-r border-black p-3 text-center">
+                    {item.price}
+                  </div>
+
+                  <div className="col-span-1 p-3 text-center">
+
+                    {
+                      Number(item.qty || 0) *
+                      Number(item.price || 0)
+                      || ""
+                    }
 
                   </div>
 
-                ))}
+                </div>
 
-              </div>
+              ))}
 
             </div>
 
             {/* FOOTER */}
 
             <div className="flex justify-between mt-10">
+
+              {/* NOTE */}
 
               <div className="w-[55%]">
 
@@ -655,6 +646,8 @@ export default function App() {
                 </div>
 
               </div>
+
+              {/* TOTAL */}
 
               <div className="w-[35%]">
 
@@ -669,6 +662,8 @@ export default function App() {
                   </span>
 
                 </div>
+
+                {/* QR */}
 
                 <div className="border-2 border-black rounded-[30px] mt-4 p-5">
 
