@@ -227,13 +227,17 @@ export default function App() {
     try {
   
       await fetch(
-        "https://script.google.com/macros/s/AKfycbz5BRru4RrYt_wAy45HSFlQsiM83g-3vXoyiGt5pB7Zu464Br8iuD8QIDPk5O3FaruX/exec",
+        "https://script.google.com/macros/s/AKfycbxfrn510Rq3XqwrT-wem-s-Cd79Tuj9XMP9gfa44b5K9FdRRkbkHQRvndzqbQpDB9e6/exec",
         {
-  
           method: "POST",
-  
+      
+          mode: "no-cors",
+      
+          headers: {
+            "Content-Type": "application/json",
+          },
+      
           body: JSON.stringify(payload),
-  
         }
       );
   
