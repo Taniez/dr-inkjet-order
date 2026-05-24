@@ -485,7 +485,7 @@ export default function App() {
               <div>
 
                 <img
-                  src="src/assets/img/5.png"
+                  src="/img/5.png"
                   width="160"
                   alt=""
                 />
@@ -668,7 +668,7 @@ export default function App() {
                 <div className="border-2 border-black rounded-[30px] mt-4 p-5">
 
                   <img
-                    src="src/assets/img/6.png"
+                    src="/img/6.png"
                     className="w-full"
                     alt=""
                   />
