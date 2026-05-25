@@ -38,7 +38,7 @@ export default function Admin() {
     try {
 
       const res = await fetch(
-        "https://script.google.com/macros/s/AKfycbzgQ9JSrCGhbOPCSHEtErRbWKbKLelr6UkpHVMmDWCPTs1cuz4XUMXT0kFwxsV50k-h/exec"
+        "https://script.google.com/macros/s/AKfycbyL-YHzYjKUkca6cIh9qAZSYh2Kf8cgmoSSe-Qph4OcWAqvSvSG6-IqZZ79cIINdt4c/exec"
       );
 
       const data = await res.json();
