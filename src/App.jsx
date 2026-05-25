@@ -40,7 +40,14 @@ export default function App() {
     "A4 +เคลือบ หน้าหลัง",
     "สติกเกอร์บนฟิวเจอร์บอร์ด",
     "ป้ายธงญี่ปุ่น",
-    "พิมขาวดำ"
+    "พิมขาวดำ",
+    "พิมพ์สี A4",
+    "ค่าติดตั้ง",
+    "ค่าขนส่ง",
+    "ค่าออกแบบ",
+    "ค่าแก้ไขงาน",
+    "ป้ายไฟ",
+    "ป้ายไฟแบล็กลิท",
   ];
 
   // =========================
@@ -578,13 +585,15 @@ export default function App() {
 
             <div className="flex justify-between items-start">
 
-              <div>
-
-                <img
+            <img
                   src="/img/5.png"
-                  width="160"
+                  
+                  width="200"
                   alt=""
                 />
+              <div>
+
+
 
                 <div className="mt-4 text-[18px] leading-8">
 
@@ -597,8 +606,9 @@ export default function App() {
                   อำเภอคลองหลวง จังหวัดปทุมธานี
                   <br />
 
-                  โทร. 063 846 2546
-
+                  โทร. 063 846 2546 และ 065 569 9961
+                  <br />
+                   email: dr.inkjet.print@gmail.com
                 </div>
 
               </div>
