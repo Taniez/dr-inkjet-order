@@ -174,6 +174,9 @@ export default function Admin() {
                 <th className="p-3 text-left">
                   หมายเหตุ
                 </th>
+                <th className="p-3 text-left">
+                  preview
+                </th>
               </tr>
 
             </thead>
@@ -236,7 +239,9 @@ export default function Admin() {
                       {item.note}
                     </td>
                     
-
+                    <td className="p-3">
+                      <button> หกหกหกหก</button>
+                    </td>
                   </tr>
 
                 ))
