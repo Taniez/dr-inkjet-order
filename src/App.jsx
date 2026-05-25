@@ -775,6 +775,7 @@ export default function App() {
 
                   <img
                     src="/img/6.png"
+                    width={200}
                     className="w-full"
                     alt=""
                   />

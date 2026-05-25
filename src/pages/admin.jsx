@@ -1,4 +1,5 @@
 import { useState } from "react";
+import html2canvas from "html2canvas";
 
 export default function Admin() {
 
@@ -10,6 +11,51 @@ export default function Admin() {
 
   const [history, setHistory] =
     useState([]);
+  // =========================
+  // STATES
+  // =========================
+
+  const [customer, setCustomer] = useState("");
+  const [phone, setPhone] = useState("");
+  const [taxId, setTaxId] = useState("");
+  const [note, setNote] = useState("");
+
+  const [items, setItems] = useState([
+    {
+      name: "",
+      size: "",
+      qty: "",
+      price: "",
+      suggestions: [],
+    },
+  ]);
+
+
+    const saveImage = async () => {
+
+      const element =
+        document.getElementById("invoice");
+  
+      const canvas =
+        await html2canvas(element, {
+          scale: 3,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+        });
+  
+      const image =
+        canvas.toDataURL("image/png");
+  
+      const link =
+        document.createElement("a");
+  
+      link.href = image;
+  
+      link.download =
+        `invoice-${Date.now()}.png`;
+  
+      link.click();
+    };
 
   // =========================
   // LOGIN
@@ -240,7 +286,9 @@ export default function Admin() {
                     </td>
                     
                     <td className="p-3">
-                      <button> หกหกหกหก</button>
+                      <button> 
+                      onClick={() => saveImage(item)}
+                        preview</button>
                     </td>
                   </tr>
 
