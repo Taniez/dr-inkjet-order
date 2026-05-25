@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Admin() {
 
@@ -35,18 +35,42 @@ export default function Admin() {
 
   const fetchHistory = () => {
 
+    // กัน script ซ้ำ
+    const oldScript =
+      document.getElementById(
+        "sheetScript"
+      );
+
+    if (oldScript) {
+
+      oldScript.remove();
+    }
+
+    // callback
+    window.loadData = (data) => {
+
+      console.log("DATA:", data);
+
+      if (Array.isArray(data)) {
+
+        setHistory(data);
+
+      } else {
+
+        setHistory([]);
+
+      }
+    };
+
+    // create script
     const script =
       document.createElement("script");
-  
+
+    script.id = "sheetScript";
+
     script.src =
       "https://script.google.com/macros/s/AKfycbzrbp4x9IxNQkO4RAnGi1TuzvdYZLPDpQ-q1pFebTpsGkp7CraUw9zqSk9xCItC-zs/exec?callback=loadData";
-  
-    window.loadData = (data) => {
-  
-      setHistory(data);
-  
-    };
-  
+
     document.body.appendChild(script);
   };
 
@@ -86,7 +110,6 @@ export default function Admin() {
         </div>
 
       </div>
-
     );
   }
 
@@ -100,9 +123,9 @@ export default function Admin() {
 
       <div className="bg-white rounded-3xl shadow-xl p-6">
 
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col md:flex-row justify-between gap-4 md:items-center mb-6">
 
-          <div className="text-3xl font-bold">
+          <div className="text-2xl md:text-3xl font-bold">
             ประวัติรายการทั้งหมด
           </div>
 
@@ -115,39 +138,39 @@ export default function Admin() {
 
         </div>
 
-        <div className="overflow-auto">
+        <div className="overflow-auto rounded-2xl border">
 
-          <table className="w-full border text-sm">
+          <table className="w-full text-sm min-w-[900px]">
 
             <thead className="bg-black text-white">
 
               <tr>
 
-                <th className="p-3">
+                <th className="p-3 text-left">
                   วันที่
                 </th>
 
-                <th className="p-3">
+                <th className="p-3 text-left">
                   รายการ
                 </th>
 
-                <th className="p-3">
+                <th className="p-3 text-left">
                   ขนาด
                 </th>
 
-                <th className="p-3">
+                <th className="p-3 text-center">
                   จำนวน
                 </th>
 
-                <th className="p-3">
+                <th className="p-3 text-center">
                   ราคา
                 </th>
 
-                <th className="p-3">
+                <th className="p-3 text-center">
                   รวม
                 </th>
 
-                <th className="p-3">
+                <th className="p-3 text-left">
                   ลูกค้า
                 </th>
 
@@ -157,44 +180,70 @@ export default function Admin() {
 
             <tbody>
 
-              {history.map((item, index) => (
+              {history.length > 0 ? (
 
-                <tr
-                  key={index}
-                  className="border-t"
-                >
+                history.map((item, index) => (
 
-                  <td className="p-3">
-                    {item.date}
-                  </td>
+                  <tr
+                    key={index}
+                    className="border-t hover:bg-gray-50"
+                  >
 
-                  <td className="p-3">
-                    {item.name}
-                  </td>
+                    <td className="p-3">
 
-                  <td className="p-3">
-                    {item.size}
-                  </td>
+                      {
+                        item.date
+                          ? new Date(item.date)
+                              .toLocaleDateString(
+                                "th-TH"
+                              )
+                          : ""
+                      }
 
-                  <td className="p-3">
-                    {item.qty}
-                  </td>
+                    </td>
 
-                  <td className="p-3">
-                    {item.price}
-                  </td>
+                    <td className="p-3">
+                      {item.name}
+                    </td>
 
-                  <td className="p-3">
-                    {item.total}
-                  </td>
+                    <td className="p-3">
+                      {item.size}
+                    </td>
 
-                  <td className="p-3">
-                    {item.customer}
+                    <td className="p-3 text-center">
+                      {item.qty}
+                    </td>
+
+                    <td className="p-3 text-center">
+                      {item.price}
+                    </td>
+
+                    <td className="p-3 text-center font-bold">
+                      {item.total}
+                    </td>
+
+                    <td className="p-3">
+                      {item.customer}
+                    </td>
+
+                  </tr>
+
+                ))
+
+              ) : (
+
+                <tr>
+
+                  <td
+                    colSpan="7"
+                    className="text-center p-10 text-gray-500"
+                  >
+                    ไม่มีข้อมูล
                   </td>
 
                 </tr>
 
-              ))}
+              )}
 
             </tbody>
 
