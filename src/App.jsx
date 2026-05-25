@@ -281,7 +281,7 @@ export default function App() {
     try {
   
       await fetch(
-        "https://script.google.com/macros/s/AKfycbxj98tbgrbLoyk4hwkeas0WJs6Qq0e426pAzkmnnF4Ac7DUKLrwpwhFijgUSPhjApQ/exec",
+        "https://script.google.com/macros/s/AKfycbyE81FTQS3Ex4nBfMVboKaaDiINS2VKNRnfopsA6KPmsxR9WcdFfgyuk4lh4DLTIlA/exec",
         {
           method: "POST",
       

@@ -33,24 +33,21 @@ export default function Admin() {
   // FETCH SHEET
   // =========================
 
-  const fetchHistory = async () => {
+  const fetchHistory = () => {
 
-    try {
-
-      const res = await fetch(
-        "https://script.google.com/macros/s/AKfycbxj98tbgrbLoyk4hwkeas0WJs6Qq0e426pAzkmnnF4Ac7DUKLrwpwhFijgUSPhjApQ/exec"
-      );
-
-      const data = await res.json();
-
+    const script =
+      document.createElement("script");
+  
+    script.src =
+      "https://script.google.com/macros/s/AKfycbyE81FTQS3Ex4nBfMVboKaaDiINS2VKNRnfopsA6KPmsxR9WcdFfgyuk4lh4DLTIlA/exec?callback=loadData";
+  
+    window.loadData = (data) => {
+  
       setHistory(data);
-
-    } catch (err) {
-
-      console.log(err);
-
-      alert("โหลดข้อมูลไม่สำเร็จ");
-    }
+  
+    };
+  
+    document.body.appendChild(script);
   };
 
   // =========================
