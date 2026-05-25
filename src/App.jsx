@@ -281,7 +281,7 @@ export default function App() {
     try {
   
       await fetch(
-        "https://script.google.com/macros/s/AKfycbyMhaHJtqn9yt4elKwAYc8nlW64ARFEJEY7vBBpxyL5UTKPXEHMUsKa6koWtQ3Vy-WJ/exec",
+        "https://script.google.com/macros/s/AKfycbzgQ9JSrCGhbOPCSHEtErRbWKbKLelr6UkpHVMmDWCPTs1cuz4XUMXT0kFwxsV50k-h/exec",
         {
           method: "POST",
       
@@ -548,7 +548,7 @@ export default function App() {
                         removeItem(index)
                       }
                     >
-                      ×
+                      
                     </button>
 
                   </div>
