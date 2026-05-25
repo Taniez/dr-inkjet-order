@@ -161,57 +161,57 @@ export default function Admin() {
   const updateData = async () => {
 
     const item = items[0];
-  
+
     await fetch(
       "https://script.google.com/macros/s/AKfycbwcSCCZk4jydztXeT_1LEwKnpSgrlc5waH8UZkvJWbJGqr-1ftNM4GVJrl6-HG7OlYl/exec",
       {
-  
+
         method: "POST",
-  
+
         mode: "no-cors",
-  
+
         headers: {
           "Content-Type":
             "text/plain;charset=utf-8",
         },
-  
+
         body: JSON.stringify({
-  
+
           action: "update",
-  
+
           row: editRow,
-  
+
           date:
             new Date()
               .toLocaleDateString(),
-  
+
           name: item.name,
-  
+
           size: item.size,
-  
+
           qty: item.qty,
-  
+
           price: item.price,
-  
+
           payment,
-  
+
           customer,
-  
+
           phone,
-  
+
           tax: taxId,
-  
+
           note,
-  
+
         }),
-  
+
       }
     );
-  
+
     alert("แก้ไขสำเร็จ");
-  
+
     setEditOpen(false);
-  
+
     fetchHistory();
   };
 
@@ -258,61 +258,343 @@ export default function Admin() {
   };
 
   // =========================
-  // SAVE PNG
+  // SAVE IMAGE
   // =========================
 
-  const savePNG = async (item) => {
+  const saveInvoiceImage = (item) => {
 
-    const element =
-      document.getElementById(
-        `invoice-${item.row}`
-      );
+    // แสดงเฉพาะ โอน / เงินสด
+    if (
+      item.payment !== "โอน" &&
+      item.payment !== "เงินสด"
+    ) {
 
-    if (!element) return;
+      alert("รายการนี้ไม่ใช่ โอน หรือ เงินสด");
 
-    const html2canvas =
-      (await import("html2canvas"))
-      .default;
+      return;
+    }
 
-    const canvas =
-      await html2canvas(element, {
-        scale: 3,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-      });
+    const total =
+      Number(item.qty || 0) *
+      Number(item.price || 0);
 
-    const image =
-      canvas.toDataURL("image/png");
+    const html = `
+      <html>
+      <head>
 
-    const link =
-      document.createElement("a");
+        <title>Invoice</title>
 
-    const now =
-      new Date();
+        <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-    const date =
-      now.toLocaleDateString("th-TH")
-        .replaceAll("/", "-");
+        <style>
 
-    const time =
-      now.toLocaleTimeString("th-TH")
-        .replaceAll(":", "-");
+          body{
+            margin:0;
+            background:#e5e5e5;
+            font-family:sans-serif;
+          }
 
-    const customerName =
-      item.customer || "customer";
+          #invoice{
+            width:1400px;
+            min-height:2000px;
+            background:white;
+            margin:auto;
+            padding:40px;
+            box-sizing:border-box;
+          }
 
-    const safeCustomer =
-      customerName.replace(
-        /[^a-zA-Z0-9ก-๙]/g,
-        "_"
-      );
+          .top{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+          }
 
-    link.href = image;
+          .logo{
+            width:180px;
+          }
 
-    link.download =
-      `${safeCustomer}_${date}_${time}.png`;
+          .title{
+            font-size:72px;
+            font-weight:900;
+            text-align:right;
+            line-height:1.1;
+          }
 
-    link.click();
+          .date{
+            font-size:32px;
+            margin-top:20px;
+            text-align:right;
+          }
+
+          .company{
+            font-size:28px;
+            line-height:1.8;
+          }
+
+          .customer{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:40px;
+            margin-top:120px;
+            font-size:32px;
+          }
+
+          .line{
+            border-bottom:2px solid #ccc;
+            padding-bottom:10px;
+          }
+
+          .tax{
+            margin-top:30px;
+            font-size:32px;
+            border-bottom:2px solid #ccc;
+            padding-bottom:10px;
+          }
+
+          .table{
+            margin-top:60px;
+            border:3px solid black;
+            border-radius:40px;
+            overflow:hidden;
+          }
+
+          .thead{
+            display:grid;
+            grid-template-columns:5fr 2fr 2fr 2fr 1fr;
+            background:#2b2b2b;
+            color:white;
+            font-size:28px;
+            font-weight:bold;
+          }
+
+          .thead div{
+            padding:25px;
+            border-right:1px solid white;
+          }
+
+          .row{
+            display:grid;
+            grid-template-columns:5fr 2fr 2fr 2fr 1fr;
+            min-height:100px;
+            font-size:28px;
+            border-top:2px solid black;
+          }
+
+          .row div{
+            padding:25px;
+            border-right:2px solid black;
+          }
+
+          .footer{
+            display:flex;
+            justify-content:space-between;
+            margin-top:80px;
+            gap:40px;
+          }
+
+          .note{
+            width:55%;
+          }
+
+          .right{
+            width:45%;
+          }
+
+          .total{
+            border:3px solid black;
+            border-radius:999px;
+            padding:20px 40px;
+            font-size:40px;
+            font-weight:bold;
+            display:flex;
+            justify-content:space-between;
+          }
+
+          .qr{
+            margin-top:40px;
+            text-align:center;
+          }
+
+          .qr img{
+            width:420px;
+          }
+
+        </style>
+
+      </head>
+
+      <body>
+
+        <div id="invoice">
+
+          <div class="top">
+
+            <img
+              class="logo"
+              src="/img/5.png"
+            />
+
+            <div class="company">
+
+              ดีอาร์ อิงค์เจ็ท ปริ้นซ์
+              <br/>
+
+              96 ตลาดสุขใจ ตำบลคลองหนึ่ง
+              <br/>
+
+              อำเภอคลองหลวง จังหวัดปทุมธานี
+              <br/>
+
+              โทร. 063 846 2546 และ 065 569 9961
+              <br/>
+
+              email: dr.inkjet.print@gmail.com
+
+            </div>
+
+            <div>
+
+              <div class="title">
+                ใบสั่งซื้อสินค้า
+              </div>
+
+              <div class="date">
+                วันที่ ${new Date(item.date).toLocaleDateString("th-TH")}
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="customer">
+
+            <div class="line">
+              ชื่อลูกค้า: ${item.customer || ""}
+            </div>
+
+            <div class="line">
+              เบอร์ติดต่อ: ${item.phone || ""}
+            </div>
+
+          </div>
+
+          <div class="tax">
+            เลขประจำตัวผู้เสียภาษี:
+            ${item.tax || ""}
+          </div>
+
+          <div class="table">
+
+            <div class="thead">
+
+              <div>รายละเอียดสินค้า</div>
+
+              <div>ขนาด</div>
+
+              <div>จำนวน</div>
+
+              <div>ราคา/หน่วย</div>
+
+              <div>รวม</div>
+
+            </div>
+
+            <div class="row">
+
+              <div>${item.name || ""}</div>
+
+              <div>${item.size || ""}</div>
+
+              <div>${item.qty || ""}</div>
+
+              <div>${item.price || ""}</div>
+
+              <div>${total}</div>
+
+            </div>
+
+          </div>
+
+          <div class="footer">
+
+            <div class="note">
+
+              <div style="font-size:42px;font-weight:bold;">
+                *หมายเหตุ
+              </div>
+
+              <div style="font-size:30px;margin-top:20px;">
+                ${item.note || ""}
+              </div>
+
+            </div>
+
+            <div class="right">
+
+              <div class="total">
+
+                <span>
+                  รวมทั้งสิ้น:
+                </span>
+
+                <span>
+                  ${total}
+                </span>
+
+              </div>
+
+              <div class="qr">
+
+                <img src="/img/6.png"/>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <script>
+
+          window.onload = async () => {
+
+            const canvas =
+              await html2canvas(
+                document.getElementById("invoice"),
+                {
+                  scale:2,
+                  useCORS:true,
+                  backgroundColor:"#ffffff"
+                }
+              );
+
+            const image =
+              canvas.toDataURL("image/png");
+
+            const link =
+              document.createElement("a");
+
+            link.href = image;
+
+            link.download =
+              "invoice-${item.row}.png";
+
+            link.click();
+          };
+
+        </script>
+
+      </body>
+      </html>
+    `;
+
+    const win =
+      window.open("", "_blank");
+
+    win.document.write(html);
+
+    win.document.close();
   };
 
   // =========================
@@ -401,7 +683,7 @@ export default function Admin() {
 
         <div className="overflow-auto rounded-2xl border">
 
-          <table className="w-full text-sm min-w-[1200px]">
+          <table className="w-full text-sm min-w-[1400px]">
 
             <thead className="bg-black text-white">
 
@@ -465,8 +747,6 @@ export default function Admin() {
 
                 filteredHistory.map((item, index) => (
 
-                  <>
-                  
                   <tr
                     key={index}
                     className="border-t hover:bg-gray-50"
@@ -526,6 +806,32 @@ export default function Admin() {
                     </td>
 
                     <td className="p-3 flex gap-2 flex-wrap">
+
+                      {/* SAVE IMAGE */}
+
+                      {(item.payment === "โอน" ||
+                        item.payment === "เงินสด") && (
+
+                        <button
+
+                          onClick={() =>
+                            saveInvoiceImage(item)
+                          }
+
+                          className="
+                            bg-green-500
+                            hover:bg-green-600
+                            text-white
+                            px-4
+                            py-2
+                            rounded-xl
+                          "
+
+                        >
+                          Save PNG
+                        </button>
+
+                      )}
 
                       {/* EDIT */}
 
@@ -615,122 +921,9 @@ export default function Admin() {
                         ลบ
                       </button>
 
-                      {/* PNG */}
-
-                      <button
-
-                        onClick={() =>
-                          savePNG(item)
-                        }
-
-                        className="
-                          bg-green-500
-                          hover:bg-green-600
-                          text-white
-                          px-4
-                          py-2
-                          rounded-xl
-                        "
-
-                      >
-                        PNG
-                      </button>
-
                     </td>
 
                   </tr>
-
-                  {/* HIDDEN PNG */}
-
-                  <tr className="hidden">
-
-                    <td colSpan="12">
-
-                      <div
-                        id={`invoice-${item.row}`}
-                        className="
-                          bg-white
-                          p-10
-                          w-[1000px]
-                          text-black
-                        "
-                      >
-
-                        <div className="text-5xl font-bold mb-10">
-                          ใบสั่งซื้อสินค้า
-                        </div>
-
-                        <div className="space-y-4 text-2xl">
-
-                          <div>
-                            ลูกค้า:
-                            {" "}
-                            {item.customer}
-                          </div>
-
-                          <div>
-                            เบอร์โทร:
-                            {" "}
-                            {item.phone}
-                          </div>
-
-                          <div>
-                            เลขผู้เสียภาษี:
-                            {" "}
-                            {item.tax}
-                          </div>
-
-                          <div>
-                            รายการ:
-                            {" "}
-                            {item.name}
-                          </div>
-
-                          <div>
-                            ขนาด:
-                            {" "}
-                            {item.size}
-                          </div>
-
-                          <div>
-                            จำนวน:
-                            {" "}
-                            {item.qty}
-                          </div>
-
-                          <div>
-                            ราคา:
-                            {" "}
-                            {item.price}
-                          </div>
-
-                          <div>
-                            รวม:
-                            {" "}
-                            {item.total}
-                          </div>
-
-                          <div>
-                            การชำระเงิน:
-                            {" "}
-                            {item.payment}
-                          </div>
-
-                          <div>
-                            หมายเหตุ:
-                            {" "}
-                            {item.note}
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                    </td>
-
-                  </tr>
-
-                  </>
 
                 ))
 
@@ -804,6 +997,8 @@ export default function Admin() {
               </button>
 
             </div>
+
+            {/* FORM */}
 
             <div className="space-y-4">
 
@@ -904,6 +1099,8 @@ export default function Admin() {
               </select>
 
             </div>
+
+            {/* ITEM */}
 
             <div className="mt-6">
 
@@ -1021,6 +1218,8 @@ export default function Admin() {
               ))}
 
             </div>
+
+            {/* BUTTONS */}
 
             <div className="
               flex
