@@ -258,6 +258,64 @@ export default function Admin() {
   };
 
   // =========================
+  // SAVE PNG
+  // =========================
+
+  const savePNG = async (item) => {
+
+    const element =
+      document.getElementById(
+        `invoice-${item.row}`
+      );
+
+    if (!element) return;
+
+    const html2canvas =
+      (await import("html2canvas"))
+      .default;
+
+    const canvas =
+      await html2canvas(element, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+      });
+
+    const image =
+      canvas.toDataURL("image/png");
+
+    const link =
+      document.createElement("a");
+
+    const now =
+      new Date();
+
+    const date =
+      now.toLocaleDateString("th-TH")
+        .replaceAll("/", "-");
+
+    const time =
+      now.toLocaleTimeString("th-TH")
+        .replaceAll(":", "-");
+
+    const customerName =
+      item.customer || "customer";
+
+    const safeCustomer =
+      customerName.replace(
+        /[^a-zA-Z0-9ก-๙]/g,
+        "_"
+      );
+
+    link.href = image;
+
+    link.download =
+      `${safeCustomer}_${date}_${time}.png`;
+
+    link.click();
+  };
+
+  // =========================
   // LOGIN PAGE
   // =========================
 
@@ -407,6 +465,8 @@ export default function Admin() {
 
                 filteredHistory.map((item, index) => (
 
+                  <>
+                  
                   <tr
                     key={index}
                     className="border-t hover:bg-gray-50"
@@ -465,7 +525,7 @@ export default function Admin() {
                       {item.note}
                     </td>
 
-                    <td className="p-3 flex gap-2">
+                    <td className="p-3 flex gap-2 flex-wrap">
 
                       {/* EDIT */}
 
@@ -555,9 +615,122 @@ export default function Admin() {
                         ลบ
                       </button>
 
+                      {/* PNG */}
+
+                      <button
+
+                        onClick={() =>
+                          savePNG(item)
+                        }
+
+                        className="
+                          bg-green-500
+                          hover:bg-green-600
+                          text-white
+                          px-4
+                          py-2
+                          rounded-xl
+                        "
+
+                      >
+                        PNG
+                      </button>
+
                     </td>
 
                   </tr>
+
+                  {/* HIDDEN PNG */}
+
+                  <tr className="hidden">
+
+                    <td colSpan="12">
+
+                      <div
+                        id={`invoice-${item.row}`}
+                        className="
+                          bg-white
+                          p-10
+                          w-[1000px]
+                          text-black
+                        "
+                      >
+
+                        <div className="text-5xl font-bold mb-10">
+                          ใบสั่งซื้อสินค้า
+                        </div>
+
+                        <div className="space-y-4 text-2xl">
+
+                          <div>
+                            ลูกค้า:
+                            {" "}
+                            {item.customer}
+                          </div>
+
+                          <div>
+                            เบอร์โทร:
+                            {" "}
+                            {item.phone}
+                          </div>
+
+                          <div>
+                            เลขผู้เสียภาษี:
+                            {" "}
+                            {item.tax}
+                          </div>
+
+                          <div>
+                            รายการ:
+                            {" "}
+                            {item.name}
+                          </div>
+
+                          <div>
+                            ขนาด:
+                            {" "}
+                            {item.size}
+                          </div>
+
+                          <div>
+                            จำนวน:
+                            {" "}
+                            {item.qty}
+                          </div>
+
+                          <div>
+                            ราคา:
+                            {" "}
+                            {item.price}
+                          </div>
+
+                          <div>
+                            รวม:
+                            {" "}
+                            {item.total}
+                          </div>
+
+                          <div>
+                            การชำระเงิน:
+                            {" "}
+                            {item.payment}
+                          </div>
+
+                          <div>
+                            หมายเหตุ:
+                            {" "}
+                            {item.note}
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+
+                  </>
 
                 ))
 
@@ -631,8 +804,6 @@ export default function Admin() {
               </button>
 
             </div>
-
-            {/* FORM */}
 
             <div className="space-y-4">
 
@@ -733,8 +904,6 @@ export default function Admin() {
               </select>
 
             </div>
-
-            {/* ITEM */}
 
             <div className="mt-6">
 
@@ -852,8 +1021,6 @@ export default function Admin() {
               ))}
 
             </div>
-
-            {/* BUTTONS */}
 
             <div className="
               flex
