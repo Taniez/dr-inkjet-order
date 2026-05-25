@@ -249,6 +249,56 @@ export default function App() {
     }
   };
 
+  const backup = async () => {
+
+    const payload = {
+
+      cus: customer,
+      phone:phone,
+      tax: taxId,
+      note:note,
+      items: items.map(item => ({
+  
+        name: item.name,
+  
+        size: item.size,
+  
+        qty: item.qty,
+  
+        price: item.price
+  
+      }))
+  
+    };
+  
+    try {
+  
+      await fetch(
+        "https://script.google.com/macros/s/AKfycbzXyQP27NcGN05OzNCoXCKBlBjBQSR3gCx32HZoet1Fc0wDVzTiveU0FT1j_mR6h32Y/exec",
+        {
+          method: "POST",
+      
+          mode: "no-cors",
+      
+          headers: {
+            "Content-Type": "application/json",
+          },
+      
+          body: JSON.stringify(payload),
+        }
+      );
+  
+      alert("บันทึกลง Sheet สำเร็จ");
+  
+    } catch (err) {
+  
+      alert("เกิดข้อผิดพลาด");
+    }
+  };
+
+  
+  
+
   // =========================
   // EMPTY ROWS
   // =========================
@@ -288,7 +338,10 @@ export default function App() {
             </button>
             <button
   className="bg-green-500 px-4 py-2 rounded-xl text-white"
-  onClick={saveToSheet}
+  onClick={() => {
+    saveToSheet();
+    backup();
+  }}
 >
   Save Sheet
 </button>
