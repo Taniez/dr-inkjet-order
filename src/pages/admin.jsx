@@ -39,7 +39,7 @@ export default function Admin() {
       document.createElement("script");
   
     script.src =
-      "https://script.google.com/macros/s/AKfycbyE81FTQS3Ex4nBfMVboKaaDiINS2VKNRnfopsA6KPmsxR9WcdFfgyuk4lh4DLTIlA/exec?callback=loadData";
+      "https://script.google.com/macros/s/AKfycbyE81FTQS3Ex4nBfMVboKaaDiINS2VKNRnfopsA6KPmsxR9WcdFfgyuk4lh4DLTIlA/exec";
   
     window.loadData = (data) => {
   
