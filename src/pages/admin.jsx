@@ -23,6 +23,16 @@ export default function Admin() {
     useState("");
 
   // =========================
+  // POPUP
+  // =========================
+
+  const [editOpen, setEditOpen] =
+    useState(false);
+
+  const [editRow, setEditRow] =
+    useState(null);
+
+  // =========================
   // FORM STATES
   // =========================
 
@@ -139,10 +149,108 @@ export default function Admin() {
     script.id = "sheetScript";
 
     script.src =
-      `https://script.google.com/macros/s/AKfycbzrbp4x9IxNQkO4RAnGi1TuzvdYZLPDpQ-q1pFebTpsGkp7CraUw9zqSk9xCItC-zs/exec?callback=loadData&t=${Date.now()}`;
+      `https://script.google.com/macros/s/AKfycby6xcOuE16h8Klo2OTxmHIa9J6vShS74hdJbMZlGduIZp9gtS3mLNIy5ICgnmBVGhSZ/exec?callback=loadData&t=${Date.now()}`;
 
     document.body.appendChild(script);
   };
+
+  // =========================
+  // UPDATE
+  // =========================
+
+  const updateData = async () => {
+
+    const item =
+      items[0];
+
+    await fetch(
+      "https://script.google.com/macros/s/AKfycby6xcOuE16h8Klo2OTxmHIa9J6vShS74hdJbMZlGduIZp9gtS3mLNIy5ICgnmBVGhSZ/exec",
+      {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify({
+
+          action: "update",
+
+          row: editRow,
+
+          date:
+            new Date()
+              .toLocaleDateString(),
+
+          name: item.name,
+
+          size: item.size,
+
+          qty: item.qty,
+
+          price: item.price,
+
+          payment,
+
+          customer,
+
+          phone,
+
+          tax: taxId,
+
+          note,
+
+        }),
+
+      }
+    );
+
+    alert("แก้ไขสำเร็จ");
+
+    setEditOpen(false);
+
+    fetchHistory();
+  };
+
+  // =========================
+  // DELETE
+  // =========================
+
+  const deleteData =
+    async (row) => {
+
+      const confirmDelete =
+        confirm("ลบรายการนี้?");
+
+      if (!confirmDelete)
+        return;
+
+      await fetch(
+        "https://script.google.com/macros/s/AKfycby6xcOuE16h8Klo2OTxmHIa9J6vShS74hdJbMZlGduIZp9gtS3mLNIy5ICgnmBVGhSZ/exec",
+        {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+
+            action: "delete",
+
+            row,
+
+          }),
+
+        }
+      );
+
+      fetchHistory();
+    };
 
   // =========================
   // LOGIN PAGE
@@ -281,7 +389,7 @@ export default function Admin() {
                 </th>
 
                 <th className="p-3 text-left">
-                  แก้ไข
+                  จัดการ
                 </th>
 
               </tr>
@@ -352,13 +460,17 @@ export default function Admin() {
                       {item.note}
                     </td>
 
-                    {/* EDIT */}
+                    <td className="p-3 flex gap-2">
 
-                    <td className="p-3">
+                      {/* EDIT */}
 
                       <button
 
                         onClick={() => {
+
+                          setEditRow(
+                            item.row
+                          );
 
                           setCustomer(
                             item.customer || ""
@@ -398,17 +510,44 @@ export default function Admin() {
                             },
                           ]);
 
-                          window.scrollTo({
-                            top: 0,
-                            behavior: "smooth",
-                          });
+                          setEditOpen(true);
 
                         }}
 
-                        className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-xl"
+                        className="
+                          bg-yellow-400
+                          hover:bg-yellow-500
+                          text-black
+                          px-4
+                          py-2
+                          rounded-xl
+                        "
 
                       >
                         แก้ไข
+                      </button>
+
+                      {/* DELETE */}
+
+                      <button
+
+                        onClick={() =>
+                          deleteData(
+                            item.row
+                          )
+                        }
+
+                        className="
+                          bg-red-500
+                          hover:bg-red-600
+                          text-white
+                          px-4
+                          py-2
+                          rounded-xl
+                        "
+
+                      >
+                        ลบ
                       </button>
 
                     </td>
@@ -439,6 +578,318 @@ export default function Admin() {
         </div>
 
       </div>
+
+      {/* POPUP */}
+
+      {editOpen && (
+
+        <div className="
+          fixed
+          inset-0
+          bg-black/50
+          z-50
+          flex
+          items-center
+          justify-center
+          p-5
+        ">
+
+          <div className="
+            bg-white
+            rounded-3xl
+            w-full
+            max-w-2xl
+            p-6
+          ">
+
+            <div className="
+              flex
+              justify-between
+              items-center
+              mb-6
+            ">
+
+              <div className="
+                text-2xl
+                font-bold
+              ">
+                แก้ไขข้อมูล
+              </div>
+
+              <button
+                onClick={() =>
+                  setEditOpen(false)
+                }
+                className="text-3xl"
+              >
+                ×
+              </button>
+
+            </div>
+
+            {/* FORM */}
+
+            <div className="space-y-4">
+
+              <input
+                type="text"
+                placeholder="ชื่อลูกค้า"
+                value={customer}
+                onChange={(e) =>
+                  setCustomer(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
+                  border
+                  p-4
+                  rounded-xl
+                "
+              />
+
+              <input
+                type="text"
+                placeholder="เบอร์โทร"
+                value={phone}
+                onChange={(e) =>
+                  setPhone(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
+                  border
+                  p-4
+                  rounded-xl
+                "
+              />
+
+              <input
+                type="text"
+                placeholder="เลขผู้เสียภาษี"
+                value={taxId}
+                onChange={(e) =>
+                  setTaxId(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
+                  border
+                  p-4
+                  rounded-xl
+                "
+              />
+
+              <textarea
+                placeholder="หมายเหตุ"
+                value={note}
+                onChange={(e) =>
+                  setNote(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
+                  border
+                  p-4
+                  rounded-xl
+                "
+              />
+
+              <select
+                value={payment}
+                onChange={(e) =>
+                  setPayment(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
+                  border
+                  p-4
+                  rounded-xl
+                "
+              >
+
+                <option value="โอน">
+                  โอน
+                </option>
+
+                <option value="เงินสด">
+                  เงินสด
+                </option>
+
+                <option value="ค้างจ่าย">
+                  ค้างจ่าย
+                </option>
+
+              </select>
+
+            </div>
+
+            {/* ITEM */}
+
+            <div className="mt-6">
+
+              {items.map((item, index) => (
+
+                <div
+                  key={index}
+                  className="
+                    border
+                    rounded-2xl
+                    p-4
+                  "
+                >
+
+                  <input
+                    type="text"
+                    placeholder="รายการ"
+                    value={item.name}
+                    onChange={(e) => {
+
+                      const newItems =
+                        [...items];
+
+                      newItems[index].name =
+                        e.target.value;
+
+                      setItems(newItems);
+
+                    }}
+                    className="
+                      w-full
+                      border
+                      p-3
+                      rounded-xl
+                      mb-3
+                    "
+                  />
+
+                  <div className="
+                    grid
+                    grid-cols-3
+                    gap-3
+                  ">
+
+                    <input
+                      type="text"
+                      placeholder="ขนาด"
+                      value={item.size}
+                      onChange={(e) => {
+
+                        const newItems =
+                          [...items];
+
+                        newItems[index].size =
+                          e.target.value;
+
+                        setItems(newItems);
+
+                      }}
+                      className="
+                        border
+                        p-3
+                        rounded-xl
+                      "
+                    />
+
+                    <input
+                      type="number"
+                      placeholder="จำนวน"
+                      value={item.qty}
+                      onChange={(e) => {
+
+                        const newItems =
+                          [...items];
+
+                        newItems[index].qty =
+                          e.target.value;
+
+                        setItems(newItems);
+
+                      }}
+                      className="
+                        border
+                        p-3
+                        rounded-xl
+                      "
+                    />
+
+                    <input
+                      type="number"
+                      placeholder="ราคา"
+                      value={item.price}
+                      onChange={(e) => {
+
+                        const newItems =
+                          [...items];
+
+                        newItems[index].price =
+                          e.target.value;
+
+                        setItems(newItems);
+
+                      }}
+                      className="
+                        border
+                        p-3
+                        rounded-xl
+                      "
+                    />
+
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
+
+            {/* BUTTONS */}
+
+            <div className="
+              flex
+              gap-3
+              mt-6
+            ">
+
+              <button
+                onClick={() =>
+                  setEditOpen(false)
+                }
+                className="
+                  flex-1
+                  border
+                  p-4
+                  rounded-xl
+                "
+              >
+                ปิด
+              </button>
+
+              <button
+                onClick={updateData}
+                className="
+                  flex-1
+                  bg-green-500
+                  text-white
+                  p-4
+                  rounded-xl
+                "
+              >
+                บันทึก
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
 
     </div>
 
