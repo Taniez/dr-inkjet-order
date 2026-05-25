@@ -165,7 +165,15 @@ export default function Admin() {
                 <th className="p-3 text-left">
                   ลูกค้า
                 </th>
-
+                <th className="p-3 text-left">
+                  เบอร์โทร
+                </th>
+                <th className="p-3 text-left">
+                  เลขผู้เสียภาษี
+                </th>
+                <th className="p-3 text-left">
+                  หมายเหตุ
+                </th>
               </tr>
 
             </thead>
@@ -217,6 +225,17 @@ export default function Admin() {
                     <td className="p-3">
                       {item.customer}
                     </td>
+                    
+                    <td className="p-3">
+                      {item.phone}
+                    </td>
+                    <td className="p-3">
+                      {item.tax}
+                    </td>
+                    <td className="p-3">
+                      {item.note}
+                    </td>
+                    
 
                   </tr>
 
