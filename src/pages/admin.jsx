@@ -149,7 +149,7 @@ export default function Admin() {
     script.id = "sheetScript";
 
     script.src =
-      `https://script.google.com/macros/s/AKfycby6xcOuE16h8Klo2OTxmHIa9J6vShS74hdJbMZlGduIZp9gtS3mLNIy5ICgnmBVGhSZ/exec?callback=loadData&t=${Date.now()}`;
+      `https://script.google.com/macros/s/AKfycbwcSCCZk4jydztXeT_1LEwKnpSgrlc5waH8UZkvJWbJGqr-1ftNM4GVJrl6-HG7OlYl/exec?callback=loadData&t=${Date.now()}`;
 
     document.body.appendChild(script);
   };
@@ -163,7 +163,7 @@ export default function Admin() {
     const item = items[0];
   
     await fetch(
-      "https://script.google.com/macros/s/AKfycby6xcOuE16h8Klo2OTxmHIa9J6vShS74hdJbMZlGduIZp9gtS3mLNIy5ICgnmBVGhSZ/exec",
+      "https://script.google.com/macros/s/AKfycbwcSCCZk4jydztXeT_1LEwKnpSgrlc5waH8UZkvJWbJGqr-1ftNM4GVJrl6-HG7OlYl/exec",
       {
   
         method: "POST",
@@ -229,7 +229,7 @@ export default function Admin() {
       return;
 
     await fetch(
-      "https://script.google.com/macros/s/AKfycby6xcOuE16h8Klo2OTxmHIa9J6vShS74hdJbMZlGduIZp9gtS3mLNIy5ICgnmBVGhSZ/exec",
+      "https://script.google.com/macros/s/AKfycbwcSCCZk4jydztXeT_1LEwKnpSgrlc5waH8UZkvJWbJGqr-1ftNM4GVJrl6-HG7OlYl/exec",
       {
 
         method: "POST",
