@@ -35,42 +35,34 @@ export default function Admin() {
 
   const fetchHistory = () => {
 
-    // กัน script ซ้ำ
     const oldScript =
       document.getElementById(
         "sheetScript"
       );
-
+  
     if (oldScript) {
-
+  
       oldScript.remove();
     }
-
-    // callback
+  
+    delete window.loadData;
+  
     window.loadData = (data) => {
-
-      console.log("DATA:", data);
-
-      if (Array.isArray(data)) {
-
-        setHistory(data);
-
-      } else {
-
-        setHistory([]);
-
-      }
+  
+      console.log(data);
+  
+      setHistory(data || []);
+  
     };
-
-    // create script
+  
     const script =
       document.createElement("script");
-
+  
     script.id = "sheetScript";
-
+  
     script.src =
-      "https://script.google.com/macros/s/AKfycbzrbp4x9IxNQkO4RAnGi1TuzvdYZLPDpQ-q1pFebTpsGkp7CraUw9zqSk9xCItC-zs/exec?callback=loadData";
-
+      `https://script.google.com/macros/s/AKfycbzrbp4x9IxNQkO4RAnGi1TuzvdYZLPDpQ-q1pFebTpsGkp7CraUw9zqSk9xCItC-zs/exec?callback=loadData&t=${Date.now()}`;
+  
     document.body.appendChild(script);
   };
 
