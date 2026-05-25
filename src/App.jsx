@@ -264,6 +264,7 @@ export default function App() {
       phone:phone,
       tax: taxId,
       note:note,
+      payment: payment,
       items: items.map(item => ({
   
         name: item.name,

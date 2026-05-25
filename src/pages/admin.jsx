@@ -1,7 +1,10 @@
 import { useState } from "react";
-import html2canvas from "html2canvas";
 
 export default function Admin() {
+
+  // =========================
+  // LOGIN
+  // =========================
 
   const [password, setPassword] =
     useState("");
@@ -9,53 +12,83 @@ export default function Admin() {
   const [loggedIn, setLoggedIn] =
     useState(false);
 
+  // =========================
+  // DATA
+  // =========================
+
   const [history, setHistory] =
     useState([]);
+
+  const [search, setSearch] =
+    useState("");
+
   // =========================
-  // STATES
+  // FORM STATES
   // =========================
 
-  const [customer, setCustomer] = useState("");
-  const [phone, setPhone] = useState("");
-  const [taxId, setTaxId] = useState("");
-  const [note, setNote] = useState("");
+  const [customer, setCustomer] =
+    useState("");
 
-  const [items, setItems] = useState([
-    {
-      name: "",
-      size: "",
-      qty: "",
-      price: "",
-      suggestions: [],
-    },
-  ]);
+  const [phone, setPhone] =
+    useState("");
 
+  const [taxId, setTaxId] =
+    useState("");
 
-    const saveImage = async () => {
+  const [note, setNote] =
+    useState("");
 
-      const element =
-        document.getElementById("invoice");
-  
-      const canvas =
-        await html2canvas(element, {
-          scale: 3,
-          useCORS: true,
-          backgroundColor: "#ffffff",
-        });
-  
-      const image =
-        canvas.toDataURL("image/png");
-  
-      const link =
-        document.createElement("a");
-  
-      link.href = image;
-  
-      link.download =
-        `invoice-${Date.now()}.png`;
-  
-      link.click();
-    };
+  const [payment, setPayment] =
+    useState("โอน");
+
+  const [items, setItems] =
+    useState([
+      {
+        name: "",
+        size: "",
+        qty: "",
+        price: "",
+        suggestions: [],
+      },
+    ]);
+
+  // =========================
+  // SEARCH FILTER
+  // =========================
+
+  const filteredHistory =
+    history.filter((item) => {
+
+      const keyword =
+        search.toLowerCase();
+
+      return (
+
+        item.customer
+          ?.toLowerCase()
+          .includes(keyword)
+
+        ||
+
+        item.name
+          ?.toLowerCase()
+          .includes(keyword)
+
+        ||
+
+        item.phone
+          ?.toString()
+          .includes(keyword)
+
+        ||
+
+        item.note
+          ?.toLowerCase()
+          .includes(keyword)
+
+      );
+
+    });
 
   // =========================
   // LOGIN
@@ -76,7 +109,7 @@ export default function Admin() {
   };
 
   // =========================
-  // FETCH SHEET
+  // FETCH DATA
   // =========================
 
   const fetchHistory = () => {
@@ -85,30 +118,29 @@ export default function Admin() {
       document.getElementById(
         "sheetScript"
       );
-  
+
     if (oldScript) {
-  
+
       oldScript.remove();
     }
-  
+
     delete window.loadData;
-  
+
     window.loadData = (data) => {
-  
+
       console.log(data);
-  
+
       setHistory(data || []);
-  
     };
-  
+
     const script =
       document.createElement("script");
-  
+
     script.id = "sheetScript";
-  
+
     script.src =
       `https://script.google.com/macros/s/AKfycbzrbp4x9IxNQkO4RAnGi1TuzvdYZLPDpQ-q1pFebTpsGkp7CraUw9zqSk9xCItC-zs/exec?callback=loadData&t=${Date.now()}`;
-  
+
     document.body.appendChild(script);
   };
 
@@ -161,6 +193,8 @@ export default function Admin() {
 
       <div className="bg-white rounded-3xl shadow-xl p-6">
 
+        {/* HEADER */}
+
         <div className="flex flex-col md:flex-row justify-between gap-4 md:items-center mb-6">
 
           <div className="text-2xl md:text-3xl font-bold">
@@ -176,9 +210,27 @@ export default function Admin() {
 
         </div>
 
+        {/* SEARCH */}
+
+        <div className="mb-6">
+
+          <input
+            type="text"
+            placeholder="ค้นหาชื่อลูกค้า / รายการ / เบอร์โทร"
+            value={search}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
+            className="w-full border p-4 rounded-2xl"
+          />
+
+        </div>
+
+        {/* TABLE */}
+
         <div className="overflow-auto rounded-2xl border">
 
-          <table className="w-full text-sm min-w-[900px]">
+          <table className="w-full text-sm min-w-[1200px]">
 
             <thead className="bg-black text-white">
 
@@ -209,29 +261,38 @@ export default function Admin() {
                 </th>
 
                 <th className="p-3 text-left">
+                  การชำระเงิน
+                </th>
+
+                <th className="p-3 text-left">
                   ลูกค้า
                 </th>
+
                 <th className="p-3 text-left">
                   เบอร์โทร
                 </th>
+
                 <th className="p-3 text-left">
                   เลขผู้เสียภาษี
                 </th>
+
                 <th className="p-3 text-left">
                   หมายเหตุ
                 </th>
+
                 <th className="p-3 text-left">
-                  preview
+                  แก้ไข
                 </th>
+
               </tr>
 
             </thead>
 
             <tbody>
 
-              {history.length > 0 ? (
+              {filteredHistory.length > 0 ? (
 
-                history.map((item, index) => (
+                filteredHistory.map((item, index) => (
 
                   <tr
                     key={index}
@@ -272,24 +333,86 @@ export default function Admin() {
                     </td>
 
                     <td className="p-3">
+                      {item.payment}
+                    </td>
+
+                    <td className="p-3">
                       {item.customer}
                     </td>
-                    
+
                     <td className="p-3">
                       {item.phone}
                     </td>
+
                     <td className="p-3">
                       {item.tax}
                     </td>
+
                     <td className="p-3">
                       {item.note}
                     </td>
-                    
+
+                    {/* EDIT */}
+
                     <td className="p-3">
-                      <button> 
-                      onClick={() => saveImage(item)}
-                        preview</button>
+
+                      <button
+
+                        onClick={() => {
+
+                          setCustomer(
+                            item.customer || ""
+                          );
+
+                          setPhone(
+                            item.phone || ""
+                          );
+
+                          setTaxId(
+                            item.tax || ""
+                          );
+
+                          setNote(
+                            item.note || ""
+                          );
+
+                          setPayment(
+                            item.payment || "โอน"
+                          );
+
+                          setItems([
+                            {
+                              name:
+                                item.name || "",
+
+                              size:
+                                item.size || "",
+
+                              qty:
+                                item.qty || "",
+
+                              price:
+                                item.price || "",
+
+                              suggestions: [],
+                            },
+                          ]);
+
+                          window.scrollTo({
+                            top: 0,
+                            behavior: "smooth",
+                          });
+
+                        }}
+
+                        className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-xl"
+
+                      >
+                        แก้ไข
+                      </button>
+
                     </td>
+
                   </tr>
 
                 ))
@@ -299,7 +422,7 @@ export default function Admin() {
                 <tr>
 
                   <td
-                    colSpan="7"
+                    colSpan="12"
                     className="text-center p-10 text-gray-500"
                   >
                     ไม่มีข้อมูล
