@@ -160,57 +160,58 @@ export default function Admin() {
 
   const updateData = async () => {
 
-    const item =
-      items[0];
-
+    const item = items[0];
+  
     await fetch(
       "https://script.google.com/macros/s/AKfycby6xcOuE16h8Klo2OTxmHIa9J6vShS74hdJbMZlGduIZp9gtS3mLNIy5ICgnmBVGhSZ/exec",
       {
-
+  
         method: "POST",
-
+  
+        mode: "no-cors",
+  
         headers: {
           "Content-Type":
-            "application/json",
+            "text/plain;charset=utf-8",
         },
-
+  
         body: JSON.stringify({
-
+  
           action: "update",
-
+  
           row: editRow,
-
+  
           date:
             new Date()
               .toLocaleDateString(),
-
+  
           name: item.name,
-
+  
           size: item.size,
-
+  
           qty: item.qty,
-
+  
           price: item.price,
-
+  
           payment,
-
+  
           customer,
-
+  
           phone,
-
+  
           tax: taxId,
-
+  
           note,
-
+  
         }),
-
+  
       }
     );
-
+  
     alert("แก้ไขสำเร็จ");
-
+  
     setEditOpen(false);
-
+  
     fetchHistory();
   };
 
@@ -219,38 +220,42 @@ export default function Admin() {
   // =========================
 
   const deleteData =
-    async (row) => {
+  async (row) => {
 
-      const confirmDelete =
-        confirm("ลบรายการนี้?");
+    const confirmDelete =
+      confirm("ลบรายการนี้?");
 
-      if (!confirmDelete)
-        return;
+    if (!confirmDelete)
+      return;
 
-      await fetch(
-        "https://script.google.com/macros/s/AKfycby6xcOuE16h8Klo2OTxmHIa9J6vShS74hdJbMZlGduIZp9gtS3mLNIy5ICgnmBVGhSZ/exec",
-        {
+    await fetch(
+      "https://script.google.com/macros/s/AKfycby6xcOuE16h8Klo2OTxmHIa9J6vShS74hdJbMZlGduIZp9gtS3mLNIy5ICgnmBVGhSZ/exec",
+      {
 
-          method: "POST",
+        method: "POST",
 
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
+        mode: "no-cors",
 
-          body: JSON.stringify({
+        headers: {
+          "Content-Type":
+            "text/plain;charset=utf-8",
+        },
 
-            action: "delete",
+        body: JSON.stringify({
 
-            row,
+          action: "delete",
 
-          }),
+          row,
 
-        }
-      );
+        }),
 
-      fetchHistory();
-    };
+      }
+    );
+
+    alert("ลบสำเร็จ");
+
+    fetchHistory();
+  };
 
   // =========================
   // LOGIN PAGE
