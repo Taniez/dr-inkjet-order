@@ -595,7 +595,7 @@ export default function App() {
 
 
 
-                <div className="mt-4 text-[18px] leading-8">
+                <div className="mt-4 text-[15px] leading-8">
 
                   ดีอาร์ อิงค์เจ็ท ปริ้นซ์
                   <br />
@@ -735,56 +735,90 @@ export default function App() {
 
             </div>
 
-            {/* FOOTER */}
+{/* FOOTER */}
 
-            <div className="flex justify-between mt-10">
+<div className="flex justify-between mt-10 gap-10">
 
-              {/* NOTE */}
+  {/* LEFT */}
 
-              <div className="w-[55%]">
+  <div className="w-[55%] flex flex-col justify-between">
 
-                <div className="text-2xl font-bold">
-                  *หมายเหตุ
-                </div>
+    {/* NOTE */}
 
-                <div className="mt-3 text-xl whitespace-pre-wrap">
-                  {note}
-                </div>
+    <div>
 
-              </div>
+      <div className="text-2xl font-bold">
+        *หมายเหตุ
+      </div>
 
-              {/* TOTAL */}
+      <div className="mt-3 text-xl whitespace-pre-wrap">
+        {note}
+      </div>
 
-              <div className="w-[35%]">
+    </div>
 
-                <div className="border-2 border-black rounded-full px-6 py-3 text-2xl font-bold flex justify-between">
+    {/* BANK */}
 
-                  <span>
-                    รวมทั้งสิ้น:
-                  </span>
+    <div className="mt-16 border rounded-2xl p-4 flex items-center gap-4">
 
-                  <span>
-                    {total}
-                  </span>
+      <img
+        src="/img/Logo_GSB.png"
+        className="w-[80px] h-[80px] object-contain"
+        alt=""
+      />
 
-                </div>
+      <div>
 
-                {/* QR */}
+        <div className="text-2xl font-bold">
+          ธนาคารออมสิน
+        </div>
 
-                <div className="border-2 border-black rounded-[30px] mt-4 p-5">
+        <div className="text-xl mt-1">
+          เลขบัญชี: 020480393527
+        </div>
 
-                  <img
-                    src="/img/6.png"
-                    width={200}
-                    className="w-full"
-                    alt=""
-                  />
+        <div className="text-xl">
+          ชื่อบัญชี: นาย ปัญญาวิศิษฐ์ สุริสุข
+        </div>
 
-                </div>
+      </div>
 
-              </div>
+    </div>
 
-            </div>
+  </div>
+
+ {/* RIGHT */}
+
+<div className="w-[45%]">
+
+{/* TOTAL */}
+
+<div className="border-2 border-black rounded-full px-6 py-3 text-2xl font-bold flex justify-between">
+
+  <span>
+    รวมทั้งสิ้น:
+  </span>
+
+  <span>
+    {total}
+  </span>
+
+</div>
+
+{/* QR */}
+
+<div className="flex justify-center mt-8">
+
+  <img
+    src="/img/6.png"
+    className="w-[420px] object-contain"
+    alt=""
+  />
+
+</div>
+
+</div>
+</div>
 
           </div>
 
