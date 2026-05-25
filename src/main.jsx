@@ -1,40 +1,32 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-
 import {
   BrowserRouter,
   Routes,
-  Route,
+  Route
 } from "react-router-dom";
 
 import App from "./App";
-import Admin from "./pages/Admin";
-
-import "./index.css";
+import Admin from "./page/admin";
 
 ReactDOM.createRoot(
   document.getElementById("root")
 ).render(
 
-  <React.StrictMode>
+  <BrowserRouter>
 
-    <BrowserRouter>
+    <Routes>
 
-      <Routes>
+      <Route
+        path="/"
+        element={<App />}
+      />
 
-        <Route
-          path="/"
-          element={<App />}
-        />
+      <Route
+        path="/admin"
+        element={<Admin />}
+      />
 
-        <Route
-          path="/admin"
-          element={<Admin />}
-        />
+    </Routes>
 
-      </Routes>
+  </BrowserRouter>
 
-    </BrowserRouter>
-
-  </React.StrictMode>
 );
