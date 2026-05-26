@@ -214,6 +214,32 @@ export default function App() {
 
     link.click();
   };
+
+  const saveImage2 = async () => {
+
+    const element =
+      document.getElementById("invoice2");
+
+    const canvas =
+      await html2canvas(element, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+      });
+
+    const image =
+      canvas.toDataURL("image/png");
+
+    const link =
+      document.createElement("a");
+
+    link.href = image;
+
+    link.download =
+      `invoice2-${Date.now()}.png`;
+
+    link.click();
+  };
   const saveToSheet = async () => {
 
     const payload = {
@@ -345,15 +371,23 @@ export default function App() {
             >
               Save PNG
             </button>
-            <button
-  className="bg-green-500 px-4 py-2 rounded-xl text-white"
-  onClick={() => {
-    saveToSheet();
-    backup();
-  }}
->
-  Save Sheet
-</button>
+                <button
+      className="bg-green-500 px-4 py-2 rounded-xl text-white"
+      onClick={() => {
+        saveToSheet();
+        backup();
+      }}
+    >
+      Save Sheet
+    </button>
+    <button
+      className="bg-gray-500 px-4 py-2 rounded-xl text-white"
+      onClick={() => {
+        saveImage2();
+      }}
+    >
+      Save ใบเสนอราคา
+    </button>
 
 
 
@@ -835,7 +869,239 @@ export default function App() {
 
 </div>
 </div>
+<div className="bg-white rounded-3xl shadow-xl p-2 md:p-6 overflow-auto">
 
+          <div
+            id="invoice2"
+            className="    bg-white
+    p-4
+    md:p-8
+    rounded-3xl
+    min-w-[800px]
+    fixed
+    -left-[99999px]
+    top-0"
+            
+          >
+
+            {/* TOP */}
+
+            <div className="flex justify-between items-start">
+
+            <img
+                  src="/img/5.png"
+                  
+                  width="200"
+                  alt=""
+                />
+              <div>
+
+
+
+                <div className="mt-4 text-[15px] leading-8">
+
+                  ดีอาร์ อิงค์เจ็ท ปริ้นซ์
+                  <br />
+
+                  96 ตลาดสุขใจ ตำบลคลองหนึ่ง
+                  <br />
+
+                  อำเภอคลองหลวง จังหวัดปทุมธานี
+                  <br />
+
+                  โทร. 063 846 2546 และ 065 569 9961
+                  <br />
+                   email: dr.inkjet.print@gmail.com
+                </div>
+
+              </div>
+
+              <div className="text-right">
+
+                <div className="text-5xl font-black">
+                  ใบเสนอราคา
+                </div>
+
+                <div className="mt-5 text-xl">
+                  วันที่{" "}
+                  {new Date().toLocaleDateString()}
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* CUSTOMER */}
+
+            <div className="grid grid-cols-2 gap-10 mt-10 text-xl">
+
+              <div className="border-b-2 pb-2">
+                ชื่อลูกค้า: {customer}
+              </div>
+
+              <div className="border-b-2 pb-2">
+                เบอร์ติดต่อ: {phone}
+              </div>
+
+            </div>
+
+            <div className="mt-5 text-xl border-b-2 pb-2">
+              เลขประจำตัวผู้เสียภาษี:
+              {" "}
+              {taxId}
+            </div>
+            <div className="mt-5 text-xl border-b-2 pb-2 whitespace-pre-wrap">
+  ที่อยู่:
+  {" "}
+  {address}
+</div>
+
+            {/* TABLE */}
+
+            <div className="mt-10 border-2 border-black rounded-[30px] overflow-hidden">
+
+              {/* HEADER */}
+
+              <div className="grid grid-cols-12 bg-[#2B2B2B] text-white font-bold text-lg">
+
+                <div className="col-span-5 p-4 border-r border-white">
+                  รายละเอียดสินค้า
+                </div>
+
+                <div className="col-span-2 p-4 border-r border-white text-center">
+                  ขนาด
+                </div>
+
+                <div className="col-span-2 p-4 border-r border-white text-center">
+                  จำนวน
+                </div>
+
+                <div className="col-span-2 p-4 border-r border-white text-center">
+                  ราคา/หน่วย
+                </div>
+
+                <div className="col-span-1 p-4 text-center">
+                  รวม
+                </div>
+
+              </div>
+
+              {/* ROWS */}
+
+              {[
+
+                ...items,
+
+                ...Array.from({
+                  length:
+                    emptyRows > 0
+                      ? emptyRows
+                      : 0,
+                }).fill({
+                  name: "",
+                  size: "",
+                  qty: "",
+                  price: "",
+                }),
+
+              ].map((item, index) => (
+
+                <div
+                  key={index}
+                  className="grid grid-cols-12 min-h-[60px] border-t border-black text-lg"
+                >
+
+                  <div className="col-span-5 border-r border-black p-3 break-words">
+                    {item.name}
+                  </div>
+
+                  <div className="col-span-2 border-r border-black p-3 text-center">
+                    {item.size}
+                  </div>
+
+                  <div className="col-span-2 border-r border-black p-3 text-center">
+                    {item.qty}
+                  </div>
+
+                  <div className="col-span-2 border-r border-black p-3 text-center">
+                    {item.price}
+                  </div>
+
+                  <div className="col-span-1 p-3 text-center">
+
+                    {
+                      Number(item.qty || 0) *
+                      Number(item.price || 0)
+                      || ""
+                    }
+
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
+
+{/* FOOTER */}
+
+<div className="flex justify-between mt-10 gap-10">
+
+  {/* LEFT */}
+
+  <div className="w-[55%] flex flex-col justify-between">
+
+    {/* NOTE */}
+
+    <div>
+
+      <div className="text-2xl font-bold">
+        *หมายเหตุ
+      </div>
+
+      <div className="mt-3 text-xl whitespace-pre-wrap text-red-600 font-bold">
+  {note}
+</div>
+
+    </div>
+
+
+  </div>
+
+ {/* RIGHT */}
+
+<div className="w-[45%]">
+
+{/* TOTAL */}
+
+<div className="border-2 border-black rounded-full px-6 py-3 text-2xl font-bold flex justify-between">
+
+  <span>
+    รวมทั้งสิ้น:
+  </span>
+
+  <span>
+    {total}
+  </span>
+
+</div>
+
+{/* QR */}
+
+<div className="flex justify-center mt-8">
+
+  <img
+    src="/img/line.png"
+    className="w-[420px] object-contain"
+    alt=""
+  />
+
+</div>
+
+</div>
+</div>
+</div>
+</div>
           </div>
 
         </div>

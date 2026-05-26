@@ -561,7 +561,7 @@ export default function Admin() {
 
               <div class="qr">
 
-                <img src="/img/6.png"/>
+                <img src="/img/line.png"/>
 
               </div>
 
