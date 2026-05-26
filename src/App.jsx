@@ -407,12 +407,21 @@ export default function App() {
               }
               className="w-full border p-3 md:p-4 rounded-xl"
             />
+                    <textarea
+          placeholder="ที่อยู่"
+          value={address}
+          onChange={(e) =>
+            setAddress(e.target.value)
+          }
+          className="w-full border p-3 md:p-4 rounded-xl min-h-[100px]"
+        />
 
             <textarea
               placeholder="หมายเหตุ"
               value={note}
               onChange={(e) =>
                 setNote(e.target.value)
+               
               }
               className="w-full border p-3 md:p-4 rounded-xl min-h-[120px]"
             />
@@ -648,6 +657,11 @@ export default function App() {
               {" "}
               {taxId}
             </div>
+            <div className="mt-5 text-xl border-b-2 pb-2 whitespace-pre-wrap">
+  ที่อยู่:
+  {" "}
+  {address}
+</div>
 
             {/* TABLE */}
 
@@ -752,9 +766,9 @@ export default function App() {
         *หมายเหตุ
       </div>
 
-      <div className="mt-3 text-xl whitespace-pre-wrap">
-        {note}
-      </div>
+      <div className="mt-3 text-xl whitespace-pre-wrap text-red-600 font-bold">
+  {note}
+</div>
 
     </div>
 

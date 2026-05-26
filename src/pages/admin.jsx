@@ -455,7 +455,7 @@ export default function Admin() {
             <div>
 
               <div class="title">
-                ใบสั่งซื้อสินค้า
+                ใบเสร็จรับเงิน
               </div>
 
               <div class="date">
@@ -523,7 +523,7 @@ export default function Admin() {
                 *หมายเหตุ
               </div>
 
-              <div style="font-size:30px;margin-top:20px;">
+              <div style="font-size:30px;margin-top:20px;"color:rgb(255, 0, 0);"">
                 ${item.note || ""}
               </div>
 
