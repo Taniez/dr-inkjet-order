@@ -48,6 +48,9 @@ export default function Admin() {
   const [note, setNote] =
     useState("");
 
+  const [address, setAddress] =
+    useState("");
+
   const [payment, setPayment] =
     useState("โอน");
 
@@ -93,6 +96,12 @@ export default function Admin() {
         ||
 
         item.note
+          ?.toLowerCase()
+          .includes(keyword)
+
+        ||
+
+        item.address
           ?.toLowerCase()
           .includes(keyword)
 
@@ -149,7 +158,7 @@ export default function Admin() {
     script.id = "sheetScript";
 
     script.src =
-      `https://script.google.com/macros/s/AKfycbwcSCCZk4jydztXeT_1LEwKnpSgrlc5waH8UZkvJWbJGqr-1ftNM4GVJrl6-HG7OlYl/exec?callback=loadData&t=${Date.now()}`;
+      `https://script.google.com/macros/s/AKfycby2e5opqSOVWTBE2yu-mAFsTT3JN1maBZyWAQjda9yVHSn_-o5CrJO2tIHyYeWGlggL/exec?callback=loadData&t=${Date.now()}`;
 
     document.body.appendChild(script);
   };
@@ -163,7 +172,7 @@ export default function Admin() {
     const item = items[0];
 
     await fetch(
-      "https://script.google.com/macros/s/AKfycbwcSCCZk4jydztXeT_1LEwKnpSgrlc5waH8UZkvJWbJGqr-1ftNM4GVJrl6-HG7OlYl/exec",
+      "https://script.google.com/macros/s/AKfycby2e5opqSOVWTBE2yu-mAFsTT3JN1maBZyWAQjda9yVHSn_-o5CrJO2tIHyYeWGlggL/exec",
       {
 
         method: "POST",
@@ -203,6 +212,8 @@ export default function Admin() {
 
           note,
 
+          address,
+
         }),
 
       }
@@ -229,7 +240,7 @@ export default function Admin() {
       return;
 
     await fetch(
-      "https://script.google.com/macros/s/AKfycbwcSCCZk4jydztXeT_1LEwKnpSgrlc5waH8UZkvJWbJGqr-1ftNM4GVJrl6-HG7OlYl/exec",
+      "https://script.google.com/macros/s/AKfycby2e5opqSOVWTBE2yu-mAFsTT3JN1maBZyWAQjda9yVHSn_-o5CrJO2tIHyYeWGlggL/exec",
       {
 
         method: "POST",
@@ -263,7 +274,6 @@ export default function Admin() {
 
   const saveInvoiceImage = (item) => {
 
-    // แสดงเฉพาะ โอน / เงินสด
     if (
       item.payment !== "โอน" &&
       item.payment !== "เงินสด"
@@ -349,6 +359,7 @@ export default function Admin() {
             font-size:32px;
             border-bottom:2px solid #ccc;
             padding-bottom:10px;
+            white-space:pre-wrap;
           }
 
           .table{
@@ -483,6 +494,11 @@ export default function Admin() {
             ${item.tax || ""}
           </div>
 
+          <div class="tax">
+            ที่อยู่:
+            ${item.address || ""}
+          </div>
+
           <div class="table">
 
             <div class="thead">
@@ -523,7 +539,7 @@ export default function Admin() {
                 *หมายเหตุ
               </div>
 
-              <div style="font-size:30px;margin-top:20px;"color:rgb(255, 0, 0);"">
+              <div style="font-size:30px;margin-top:20px;color:red;">
                 ${item.note || ""}
               </div>
 
@@ -636,17 +652,11 @@ export default function Admin() {
     );
   }
 
-  // =========================
-  // ADMIN PAGE
-  // =========================
-
   return (
 
     <div className="min-h-screen bg-gray-100 p-5">
 
       <div className="bg-white rounded-3xl shadow-xl p-6">
-
-        {/* HEADER */}
 
         <div className="flex flex-col md:flex-row justify-between gap-4 md:items-center mb-6">
 
@@ -663,8 +673,6 @@ export default function Admin() {
 
         </div>
 
-        {/* SEARCH */}
-
         <div className="mb-6">
 
           <input
@@ -679,63 +687,27 @@ export default function Admin() {
 
         </div>
 
-        {/* TABLE */}
-
         <div className="overflow-auto rounded-2xl border">
 
-          <table className="w-full text-sm min-w-[1400px]">
+          <table className="w-full text-sm min-w-[1600px]">
 
             <thead className="bg-black text-white">
 
               <tr>
 
-                <th className="p-3 text-left">
-                  วันที่
-                </th>
-
-                <th className="p-3 text-left">
-                  รายการ
-                </th>
-
-                <th className="p-3 text-left">
-                  ขนาด
-                </th>
-
-                <th className="p-3 text-center">
-                  จำนวน
-                </th>
-
-                <th className="p-3 text-center">
-                  ราคา
-                </th>
-
-                <th className="p-3 text-center">
-                  รวม
-                </th>
-
-                <th className="p-3 text-left">
-                  การชำระเงิน
-                </th>
-
-                <th className="p-3 text-left">
-                  ลูกค้า
-                </th>
-
-                <th className="p-3 text-left">
-                  เบอร์โทร
-                </th>
-
-                <th className="p-3 text-left">
-                  เลขผู้เสียภาษี
-                </th>
-
-                <th className="p-3 text-left">
-                  หมายเหตุ
-                </th>
-
-                <th className="p-3 text-left">
-                  จัดการ
-                </th>
+                <th className="p-3 text-left">วันที่</th>
+                <th className="p-3 text-left">รายการ</th>
+                <th className="p-3 text-left">ขนาด</th>
+                <th className="p-3 text-center">จำนวน</th>
+                <th className="p-3 text-center">ราคา</th>
+                <th className="p-3 text-center">รวม</th>
+                <th className="p-3 text-left">การชำระเงิน</th>
+                <th className="p-3 text-left">ลูกค้า</th>
+                <th className="p-3 text-left">เบอร์โทร</th>
+                <th className="p-3 text-left">เลขผู้เสียภาษี</th>
+                <th className="p-3 text-left">หมายเหตุ</th>
+                <th className="p-3 text-left">ที่อยู่</th>
+                <th className="p-3 text-left">จัดการ</th>
 
               </tr>
 
@@ -753,16 +725,12 @@ export default function Admin() {
                   >
 
                     <td className="p-3">
-
                       {
                         item.date
                           ? new Date(item.date)
-                              .toLocaleDateString(
-                                "th-TH"
-                              )
+                              .toLocaleDateString("th-TH")
                           : ""
                       }
-
                     </td>
 
                     <td className="p-3">
@@ -801,39 +769,34 @@ export default function Admin() {
                       {item.tax}
                     </td>
 
-                    <td className="p-3">
+                    <td className="p-3 whitespace-pre-wrap">
                       {item.note}
+                    </td>
+
+                    <td className="p-3 whitespace-pre-wrap max-w-[300px]">
+                      {item.address}
                     </td>
 
                     <td className="p-3 flex gap-2 flex-wrap">
 
-                      {/* SAVE IMAGE */}
+                      <button
 
-                      {(item.payment === "โอน" ||
-                        item.payment === "เงินสด") && (
+                        onClick={() =>
+                          saveInvoiceImage(item)
+                        }
 
-                        <button
+                        className="
+                          bg-green-500
+                          hover:bg-green-600
+                          text-white
+                          px-4
+                          py-2
+                          rounded-xl
+                        "
 
-                          onClick={() =>
-                            saveInvoiceImage(item)
-                          }
-
-                          className="
-                            bg-green-500
-                            hover:bg-green-600
-                            text-white
-                            px-4
-                            py-2
-                            rounded-xl
-                          "
-
-                        >
-                          Save PNG
-                        </button>
-
-                      )}
-
-                      {/* EDIT */}
+                      >
+                        Save PNG
+                      </button>
 
                       <button
 
@@ -857,6 +820,10 @@ export default function Admin() {
 
                           setNote(
                             item.note || ""
+                          );
+
+                          setAddress(
+                            item.address || ""
                           );
 
                           setPayment(
@@ -898,8 +865,6 @@ export default function Admin() {
                         แก้ไข
                       </button>
 
-                      {/* DELETE */}
-
                       <button
 
                         onClick={() =>
@@ -932,7 +897,7 @@ export default function Admin() {
                 <tr>
 
                   <td
-                    colSpan="12"
+                    colSpan="13"
                     className="text-center p-10 text-gray-500"
                   >
                     ไม่มีข้อมูล
@@ -949,8 +914,6 @@ export default function Admin() {
         </div>
 
       </div>
-
-      {/* POPUP */}
 
       {editOpen && (
 
@@ -998,8 +961,6 @@ export default function Admin() {
 
             </div>
 
-            {/* FORM */}
-
             <div className="space-y-4">
 
               <input
@@ -1042,6 +1003,22 @@ export default function Admin() {
                 value={taxId}
                 onChange={(e) =>
                   setTaxId(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
+                  border
+                  p-4
+                  rounded-xl
+                "
+              />
+
+              <textarea
+                placeholder="ที่อยู่"
+                value={address}
+                onChange={(e) =>
+                  setAddress(
                     e.target.value
                   )
                 }
@@ -1099,8 +1076,6 @@ export default function Admin() {
               </select>
 
             </div>
-
-            {/* ITEM */}
 
             <div className="mt-6">
 
@@ -1218,8 +1193,6 @@ export default function Admin() {
               ))}
 
             </div>
-
-            {/* BUTTONS */}
 
             <div className="
               flex

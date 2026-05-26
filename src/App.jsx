@@ -58,6 +58,7 @@ export default function App() {
   const [phone, setPhone] = useState("");
   const [taxId, setTaxId] = useState("");
   const [note, setNote] = useState("");
+  const [address, setAddress] = useState("");
 
   const [items, setItems] = useState([
     {
@@ -264,7 +265,7 @@ export default function App() {
       phone:phone,
       tax: taxId,
       note:note,
-      payment: payment,
+      address: address,
       items: items.map(item => ({
   
         name: item.name,
@@ -282,7 +283,7 @@ export default function App() {
     try {
   
       await fetch(
-        "https://script.google.com/macros/s/AKfycbzrbp4x9IxNQkO4RAnGi1TuzvdYZLPDpQ-q1pFebTpsGkp7CraUw9zqSk9xCItC-zs/exec",
+        "https://script.google.com/macros/s/AKfycby2e5opqSOVWTBE2yu-mAFsTT3JN1maBZyWAQjda9yVHSn_-o5CrJO2tIHyYeWGlggL/exec",
         {
           method: "POST",
       
@@ -407,6 +408,14 @@ export default function App() {
               }
               className="w-full border p-3 md:p-4 rounded-xl"
             />
+            <textarea
+  placeholder="ที่อยู่"
+  value={address}
+  onChange={(e) =>
+    setAddress(e.target.value)
+  }
+  className="w-full border p-3 md:p-4 rounded-xl min-h-[100px]"
+/>
 
             <textarea
               placeholder="หมายเหตุ"
@@ -649,6 +658,11 @@ export default function App() {
               {" "}
               {taxId}
             </div>
+            <div className="mt-5 text-xl border-b-2 pb-2 whitespace-pre-wrap">
+  ที่อยู่:
+  {" "}
+  {address}
+</div>
 
             {/* TABLE */}
 
@@ -753,7 +767,7 @@ export default function App() {
         *หมายเหตุ
       </div>
 
-<div className="mt-3 text-xl whitespace-pre-wrap text-red-600 font-bold">
+      <div className="mt-3 text-xl whitespace-pre-wrap text-red-600 font-bold">
   {note}
 </div>
 
