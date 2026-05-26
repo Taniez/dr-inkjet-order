@@ -70,7 +70,13 @@ export default function Admin() {
   // =========================
 
   const filteredHistory =
-    history.filter((item) => {
+  [...history]
+    .sort((a, b) => {
+
+      return new Date(b.date) - new Date(a.date);
+
+    })
+    .filter((item) => {
 
       const keyword =
         search.toLowerCase();
