@@ -1,4 +1,5 @@
 import { useState } from "react";
+import html2canvas from "html2canvas";
 
 export default function Admin() {
 
@@ -356,17 +357,18 @@ export default function Admin() {
           }
 
           .line{
+
             border-bottom:2px solid #ccc;
             padding-bottom:10px;
           }
 
-          .tax{
-            margin-top:30px;
+.tax{
+margin-top:30px;
+          gap:40px;
+  
             font-size:32px;
-            border-bottom:2px solid #ccc;
-            padding-bottom:10px;
-            white-space:pre-wrap;
-          }
+  border-bottom:2px solid #ccc;
+}
 
           .table{
             margin-top:60px;
@@ -496,13 +498,11 @@ export default function Admin() {
           </div>
 
           <div class="tax">
-            เลขประจำตัวผู้เสียภาษี:
-            ${item.tax || ""}
+            เลขประจำตัวผู้เสียภาษี:${item.tax || ""}
           </div>
 
           <div class="tax">
-            ที่อยู่:
-            ${item.address || ""}
+            ที่อยู่:${item.address || ""}
           </div>
 
           <div class="table">
