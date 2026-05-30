@@ -385,6 +385,7 @@ export default function App() {
       className="bg-gray-500 px-4 py-2 rounded-xl text-white"
       onClick={() => {
         saveImage2();
+        backup();
       }}
     >
       Save ใบเสนอราคา
