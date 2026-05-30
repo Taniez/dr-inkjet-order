@@ -1,5 +1,6 @@
 import { useState } from "react";
 import html2canvas from "html2canvas";
+import Admin from "./pages/admin";
 
 export default function App() {
 
@@ -387,6 +388,15 @@ export default function App() {
       }}
     >
       Save ใบเสนอราคา
+    </button>
+
+    <button
+      className="bg-purple-500 px-4 py-2 rounded-xl text-white"
+      onClick={() => {
+        window.location.href = '/admin';
+      }}
+    >
+      history
     </button>
 
 
