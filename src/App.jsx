@@ -395,6 +395,7 @@ export default function App() {
       className="bg-purple-500 px-4 py-2 rounded-xl text-white"
       onClick={() => {
         window.location.href = '/admin';
+        backup();
       }}
     >
       history
