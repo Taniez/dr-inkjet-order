@@ -327,7 +327,7 @@ export default function Admin() {
           }
 
           .logo{
-            width:180px;
+            width:280px;
           }
 
           .title{
@@ -338,13 +338,13 @@ export default function Admin() {
           }
 
           .date{
-            font-size:32px;
+            font-size:42px;
             margin-top:20px;
             text-align:right;
           }
 
           .company{
-            font-size:28px;
+            font-size:30px;
             line-height:1.8;
           }
 
@@ -353,7 +353,7 @@ export default function Admin() {
             grid-template-columns:1fr 1fr;
             gap:40px;
             margin-top:120px;
-            font-size:32px;
+            font-size:42px;
           }
 
           .line{
@@ -366,7 +366,7 @@ export default function Admin() {
 margin-top:30px;
           gap:40px;
   
-            font-size:32px;
+            font-size:42px;
   border-bottom:2px solid #ccc;
 }
 
@@ -435,7 +435,7 @@ margin-top:30px;
           }
 
           .qr img{
-            width:420px;
+            width:520px;
           }
 
         </style>
