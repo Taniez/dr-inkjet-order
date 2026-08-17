@@ -190,7 +190,7 @@ export default function Admin() {
       script.id = "sheetScript";
 
       script.src =
-        `https://script.google.com/macros/s/AKfycby2e5opqSOVWTBE2yu-mAFsTT3JN1maBZyWAQjda9yVHSn_-o5CrJO2tIHyYeWGlggL/exec?callback=loadData&t=${Date.now()}`;
+        `https://script.google.com/macros/s/AKfycbwaFLdoVBaKHUltHxA0cLN0M6yw9CplNQiKe431k3uLdcK9IU5-xvDpT23uP9ZTftL2/exec?callback=loadData&t=${Date.now()}`;
 
       script.onerror = () => {
         clearTimeout(timeoutId);
@@ -218,7 +218,7 @@ export default function Admin() {
     const item = items[0];
 
     await fetch(
-      "https://script.google.com/macros/s/AKfycby2e5opqSOVWTBE2yu-mAFsTT3JN1maBZyWAQjda9yVHSn_-o5CrJO2tIHyYeWGlggL/exec",
+      "https://script.google.com/macros/s/AKfycbwaFLdoVBaKHUltHxA0cLN0M6yw9CplNQiKe431k3uLdcK9IU5-xvDpT23uP9ZTftL2/exec",
       {
 
         method: "POST",
@@ -286,7 +286,7 @@ export default function Admin() {
       return;
 
     await fetch(
-      "https://script.google.com/macros/s/AKfycby2e5opqSOVWTBE2yu-mAFsTT3JN1maBZyWAQjda9yVHSn_-o5CrJO2tIHyYeWGlggL/exec",
+      "https://script.google.com/macros/s/AKfycbwaFLdoVBaKHUltHxA0cLN0M6yw9CplNQiKe431k3uLdcK9IU5-xvDpT23uP9ZTftL2/exec",
       {
 
         method: "POST",
