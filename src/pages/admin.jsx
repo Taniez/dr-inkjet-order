@@ -1,17 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import html2canvas from "html2canvas";
 
 export default function Admin() {
 
   // =========================
-  // LOGIN
+  // AUTO LOGIN (ไม่ต้อง Login)
   // =========================
 
-  const [password, setPassword] =
-    useState("");
-
-  const [loggedIn, setLoggedIn] =
-    useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
 
   // =========================
   // DATA
@@ -67,72 +63,53 @@ export default function Admin() {
     ]);
 
   // =========================
-  // SEARCH FILTER
+  // LOAD DATA ON MOUNT
+  // =========================
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  // =========================
+  // SEARCH FILTER & SORT
   // =========================
 
   const filteredHistory =
   [...history]
-    .sort((a, b) => {
-
-      return new Date(b.date) - new Date(a.date);
-
-    })
     .filter((item) => {
 
-      const keyword =
-        search.toLowerCase();
+      // ถ้า search ว่างให้แสดงทั้งหมด
+      if (!search.trim()) return true;
+
+      const keyword = search.toLowerCase().trim();
+
+      // Normalize ข้อมูลต่างๆ เพื่อค้นหาที่ดีกว่า
+      const customer = (item.customer || "").toLowerCase().trim();
+      const name = (item.name || "").toLowerCase().trim();
+      const phone = (item.phone || "").toString().trim();
+      const note = (item.note || "").toLowerCase().trim();
+      const address = (item.address || "").toLowerCase().trim();
 
       return (
-
-        item.customer
-          ?.toLowerCase()
-          .includes(keyword)
-
-        ||
-
-        item.name
-          ?.toLowerCase()
-          .includes(keyword)
-
-        ||
-
-        item.phone
-          ?.toString()
-          .includes(keyword)
-
-        ||
-
-        item.note
-          ?.toLowerCase()
-          .includes(keyword)
-
-        ||
-
-        item.address
-          ?.toLowerCase()
-          .includes(keyword)
-
+        customer.includes(keyword)
+        || name.includes(keyword)
+        || phone.includes(keyword)
+        || note.includes(keyword)
+        || address.includes(keyword)
       );
 
+    })
+    .sort((a, b) => {
+      // Sort โดยดูจากวันที่ให้ล่าสุดขึ้นมาก่อน
+      try {
+        // Parse date ให้ถูกต้อง
+        const dateA = new Date(a.date || 0).getTime();
+        const dateB = new Date(b.date || 0).getTime();
+        return dateB - dateA; // ล่าสุดขึ้นมาก่อน
+      } catch (e) {
+        return 0;
+      }
     });
-
-  // =========================
-  // LOGIN
-  // =========================
-
-  const login = () => {
-
-    if (password === "1108") {
-
-      setLoggedIn(true);
-
-      fetchHistory();
-
-    } else {
-
-      alert("รหัสไม่ถูกต้อง");
-    }
-  };
 
   // =========================
   // FETCH DATA
@@ -276,7 +253,7 @@ export default function Admin() {
   };
 
   // =========================
-  // SAVE IMAGE
+  // SAVE INVOICE IMAGE
   // =========================
 
   const saveInvoiceImage = (item) => {
@@ -620,82 +597,64 @@ margin-top:30px;
   };
 
   // =========================
-  // LOGIN PAGE
+  // MAIN ADMIN PAGE
   // =========================
-
-  if (!loggedIn) {
-
-    return (
-
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-5">
-
-        <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md">
-
-          <div className="text-3xl font-bold text-center mb-6">
-            ADMIN LOGIN
-          </div>
-
-          <input
-            type="password"
-            placeholder="กรอกรหัสผ่าน"
-            value={password}
-            onChange={(e) =>
-              setPassword(e.target.value)
-            }
-            className="w-full border p-4 rounded-xl"
-          />
-
-          <button
-            onClick={login}
-            className="w-full mt-4 bg-purple-700 text-white p-4 rounded-xl"
-          >
-            เข้าสู่ระบบ
-          </button>
-
-        </div>
-
-      </div>
-    );
-  }
 
   return (
 
-    <div className="min-h-screen bg-gray-100 p-5">
+    <div className="min-h-screen bg-gray-100 p-3 md:p-5">
 
-      <div className="bg-white rounded-3xl shadow-xl p-6">
+<div className="bg-white rounded-3xl shadow-xl p-4 md:p-6">
 
         <div className="flex flex-col md:flex-row justify-between gap-4 md:items-center mb-6">
 
           <div className="text-2xl md:text-3xl font-bold">
-            ประวัติรายการทั้งหมด
+            ประวัติรายการทั้งหมด (ใบเสร็จ)
           </div>
 
           <button
             onClick={fetchHistory}
-            className="bg-blue-500 text-white px-5 py-3 rounded-xl"
+            className="bg-blue-500 text-white px-5 py-3 rounded-xl hover:bg-blue-600"
           >
-            รีโหลด
+            🔄 รีโหลด
           </button>
 
         </div>
 
         <div className="mb-6">
 
-          <input
-            type="text"
-            placeholder="ค้นหาชื่อลูกค้า / รายการ / เบอร์โทร"
-            value={search}
-            onChange={(e) =>
-              setSearch(e.target.value)
-            }
-            className="w-full border p-4 rounded-2xl"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="ค้นหาชื่อลูกค้า / รายการ / เบอร์โทร"
+              value={search}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
+              className="w-full border p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 text-xl"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {search && (
+            <div className="mt-2 text-sm text-gray-600">
+              พบ <span className="font-bold text-blue-600">{filteredHistory.length}</span> รายการ
+            </div>
+          )}
 
         </div>
 
-        <div className="overflow-auto rounded-2xl border">
+        {/* DESKTOP TABLE VIEW */}
+        <div className="hidden md:block overflow-auto rounded-2xl border">
 
-          <table className="w-full text-sm min-w-[1600px]">
+        <table className="w-full text-xs md:text-sm min-w-[1000px]">
 
             <thead className="bg-black text-white">
 
@@ -775,15 +734,15 @@ margin-top:30px;
                       {item.tax}
                     </td>
 
-                    <td className="p-3 whitespace-pre-wrap">
+                    <td className="p-3 whitespace-pre-wrap max-w-[150px]">
                       {item.note}
                     </td>
 
-                    <td className="p-3 whitespace-pre-wrap max-w-[300px]">
+                    <td className="p-3 whitespace-pre-wrap max-w-[150px]">
                       {item.address}
                     </td>
 
-                    <td className="p-3 flex gap-2 flex-wrap">
+                    <td className="flex flex-col gap-2 p-3">
 
                       <button
 
@@ -795,13 +754,14 @@ margin-top:30px;
                           bg-green-500
                           hover:bg-green-600
                           text-white
-                          px-4
-                          py-2
-                          rounded-xl
+                          px-3
+                          py-1
+                          rounded-lg
+                          text-sm
                         "
 
                       >
-                        Save PNG
+                        💾 Save
                       </button>
 
                       <button
@@ -862,13 +822,14 @@ margin-top:30px;
                           bg-yellow-400
                           hover:bg-yellow-500
                           text-black
-                          px-4
-                          py-2
-                          rounded-xl
+                          px-3
+                          py-1
+                          rounded-lg
+                          text-sm
                         "
 
                       >
-                        แก้ไข
+                        ✏️ แก้ไข
                       </button>
 
                       <button
@@ -883,13 +844,14 @@ margin-top:30px;
                           bg-red-500
                           hover:bg-red-600
                           text-white
-                          px-4
-                          py-2
-                          rounded-xl
+                          px-3
+                          py-1
+                          rounded-lg
+                          text-sm
                         "
 
                       >
-                        ลบ
+                        🗑️ ลบ
                       </button>
 
                     </td>
@@ -919,8 +881,85 @@ margin-top:30px;
 
         </div>
 
+        {/* MOBILE CARD VIEW */}
+        <div className="md:hidden space-y-3">
+          {filteredHistory.length > 0 ? (
+            filteredHistory.map((item, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-2xl p-4 shadow border-l-4 border-blue-500"
+              >
+                <div className="font-bold text-lg mb-2">
+                  {item.customer}
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-sm mb-3">
+                  <div><span className="font-semibold">วันที่:</span> {item.date ? new Date(item.date).toLocaleDateString("th-TH") : ""}</div>
+                  <div><span className="font-semibold">รายการ:</span> {item.name}</div>
+                  <div><span className="font-semibold">ขนาด:</span> {item.size}</div>
+                  <div><span className="font-semibold">จำนวน:</span> {item.qty}</div>
+                  <div><span className="font-semibold">ราคา:</span> ฿{item.price}</div>
+                  <div className="font-bold text-green-600"><span className="font-semibold">รวม:</span> ฿{item.total}</div>
+                  <div><span className="font-semibold">เบอร์:</span> {item.phone}</div>
+                  <div><span className="font-semibold">ชำระ:</span> {item.payment}</div>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() =>
+                      saveInvoiceImage(item)
+                    }
+                    className="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-2 rounded-lg text-sm"
+                  >
+                    💾 Save
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setEditRow(item.row);
+                      setCustomer(item.customer || "");
+                      setPhone(item.phone || "");
+                      setTaxId(item.tax || "");
+                      setNote(item.note || "");
+                      setAddress(item.address || "");
+                      setPayment(item.payment || "โอน");
+                      setItems([
+                        {
+                          name: item.name || "",
+                          size: item.size || "",
+                          qty: item.qty || "",
+                          price: item.price || "",
+                          suggestions: [],
+                        },
+                      ]);
+                      setEditOpen(true);
+                    }}
+                    className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-black px-2 py-2 rounded-lg text-sm"
+                  >
+                    ✏️ แก้ไข
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      deleteData(item.row)
+                    }
+                    className="flex-1 bg-red-500 hover:bg-red-600 text-white px-2 py-2 rounded-lg text-sm"
+                  >
+                    🗑️ ลบ
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center p-10 text-gray-500">
+              ไม่มีข้อมูล
+            </div>
+          )}
+        </div>
+
       </div>
 
+      {/* EDIT MODAL */}
       {editOpen && (
 
         <div className="
@@ -934,13 +973,15 @@ margin-top:30px;
           p-5
         ">
 
-          <div className="
-            bg-white
-            rounded-3xl
-            w-full
-            max-w-2xl
-            p-6
-          ">
+<div className="
+  bg-white
+  rounded-3xl
+  w-full
+  max-w-2xl
+  p-4 md:p-6
+  max-h-[90vh]
+  overflow-y-auto
+">
 
             <div className="
               flex
@@ -960,9 +1001,9 @@ margin-top:30px;
                 onClick={() =>
                   setEditOpen(false)
                 }
-                className="text-3xl"
+                className="text-3xl cursor-pointer hover:text-red-500"
               >
-                ×
+                ✕
               </button>
 
             </div>
@@ -983,6 +1024,9 @@ margin-top:30px;
                   border
                   p-4
                   rounded-xl
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-blue-500
                 "
               />
 
@@ -1000,6 +1044,9 @@ margin-top:30px;
                   border
                   p-4
                   rounded-xl
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-blue-500
                 "
               />
 
@@ -1017,6 +1064,9 @@ margin-top:30px;
                   border
                   p-4
                   rounded-xl
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-blue-500
                 "
               />
 
@@ -1033,6 +1083,10 @@ margin-top:30px;
                   border
                   p-4
                   rounded-xl
+                  min-h-[100px]
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-blue-500
                 "
               />
 
@@ -1049,6 +1103,10 @@ margin-top:30px;
                   border
                   p-4
                   rounded-xl
+                  min-h-[120px]
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-blue-500
                 "
               />
 
@@ -1064,6 +1122,9 @@ margin-top:30px;
                   border
                   p-4
                   rounded-xl
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-blue-500
                 "
               >
 
@@ -1093,6 +1154,7 @@ margin-top:30px;
                     border
                     rounded-2xl
                     p-4
+                    bg-gray-50
                   "
                 >
 
@@ -1117,12 +1179,16 @@ margin-top:30px;
                       p-3
                       rounded-xl
                       mb-3
+                      focus:outline-none
+                      focus:ring-2
+                      focus:ring-blue-500
                     "
                   />
 
                   <div className="
                     grid
-                    grid-cols-3
+                    grid-cols-1
+                    md:grid-cols-3
                     gap-3
                   ">
 
@@ -1145,6 +1211,9 @@ margin-top:30px;
                         border
                         p-3
                         rounded-xl
+                        focus:outline-none
+                        focus:ring-2
+                        focus:ring-blue-500
                       "
                     />
 
@@ -1167,6 +1236,9 @@ margin-top:30px;
                         border
                         p-3
                         rounded-xl
+                        focus:outline-none
+                        focus:ring-2
+                        focus:ring-blue-500
                       "
                     />
 
@@ -1189,6 +1261,9 @@ margin-top:30px;
                         border
                         p-3
                         rounded-xl
+                        focus:outline-none
+                        focus:ring-2
+                        focus:ring-blue-500
                       "
                     />
 
@@ -1215,6 +1290,7 @@ margin-top:30px;
                   border
                   p-4
                   rounded-xl
+                  hover:bg-gray-100
                 "
               >
                 ปิด
@@ -1228,9 +1304,10 @@ margin-top:30px;
                   text-white
                   p-4
                   rounded-xl
+                  hover:bg-green-600
                 "
               >
-                บันทึก
+                💾 บันทึก
               </button>
 
             </div>
@@ -1242,6 +1319,7 @@ margin-top:30px;
       )}
 
     </div>
+    
 
   );
 }

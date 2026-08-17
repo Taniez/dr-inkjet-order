@@ -397,7 +397,7 @@ export default function App() {
         window.location.href = '/admin';
       }}
     >
-      history
+      ใบเสร็จ
     </button>
 
 
