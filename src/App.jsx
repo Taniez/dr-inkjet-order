@@ -187,7 +187,7 @@ export default function App() {
   };
 
   // =========================
-  // SAVE IMAGE
+  // SAVE IMAGE - PURCHASE ORDER
   // =========================
 
   const saveImage = async () => {
@@ -216,6 +216,349 @@ export default function App() {
     link.click();
   };
 
+  // =========================
+  // SAVE INVOICE IMAGE - RECEIPT
+  // =========================
+
+  const saveInvoiceImage = () => {
+
+    // ตรวจสอบว่ามีข้อมูลครบหรือไม่
+    if (!customer.trim() || !items[0]?.name) {
+      alert("กรุณากรอกข้อมูลลูกค้าและรายการสินค้า");
+      return;
+    }
+
+    const item = items[0];
+    const itemTotal =
+      Number(item.qty || 0) *
+      Number(item.price || 0);
+
+    const html = `
+      <html>
+      <head>
+
+        <title>Invoice</title>
+
+        <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+        <style>
+
+          body{
+            margin:0;
+            background:#e5e5e5;
+            font-family:sans-serif;
+          }
+
+          #invoice{
+            width:1400px;
+            min-height:2000px;
+            background:white;
+            margin:auto;
+            padding:40px;
+            box-sizing:border-box;
+          }
+
+          .top{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+          }
+
+          .logo{
+            width:280px;
+          }
+
+          .title{
+            font-size:72px;
+            font-weight:900;
+            text-align:right;
+            line-height:1.1;
+          }
+
+          .date{
+            font-size:42px;
+            margin-top:20px;
+            text-align:right;
+          }
+
+          .company{
+            font-size:30px;
+            line-height:1.8;
+          }
+
+          .customer{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:40px;
+            margin-top:120px;
+            font-size:42px;
+          }
+
+          .line{
+            border-bottom:2px solid #ccc;
+            padding-bottom:10px;
+          }
+
+          .tax{
+            margin-top:30px;
+            gap:40px;
+            font-size:42px;
+            border-bottom:2px solid #ccc;
+          }
+
+          .table{
+            margin-top:60px;
+            border:3px solid black;
+            border-radius:40px;
+            overflow:hidden;
+          }
+
+          .thead{
+            display:grid;
+            grid-template-columns:5fr 2fr 2fr 2fr 1fr;
+            background:#2b2b2b;
+            color:white;
+            font-size:28px;
+            font-weight:bold;
+          }
+
+          .thead div{
+            padding:25px;
+            border-right:1px solid white;
+          }
+
+          .row{
+            display:grid;
+            grid-template-columns:5fr 2fr 2fr 2fr 1fr;
+            min-height:100px;
+            font-size:28px;
+            border-top:2px solid black;
+          }
+
+          .row div{
+            padding:25px;
+            border-right:2px solid black;
+          }
+
+          .footer{
+            display:flex;
+            justify-content:space-between;
+            margin-top:80px;
+            gap:40px;
+          }
+
+          .note{
+            width:55%;
+          }
+
+          .right{
+            width:45%;
+          }
+
+          .total{
+            border:3px solid black;
+            border-radius:999px;
+            padding:20px 40px;
+            font-size:40px;
+            font-weight:bold;
+            display:flex;
+            justify-content:space-between;
+          }
+
+          .qr{
+            margin-top:40px;
+            text-align:center;
+          }
+
+          .qr img{
+            width:520px;
+          }
+
+        </style>
+
+      </head>
+
+      <body>
+
+        <div id="invoice">
+
+          <div class="top">
+
+            <img
+              class="logo"
+              src="/img/5.png"
+            />
+
+            <div class="company">
+
+              ดีอาร์ อิงค์เจ็ท ปริ้นซ์
+              <br/>
+
+              96 ตลาดสุขใจ ตำบลคลองหนึ่ง
+              <br/>
+
+              อำเภอคลองหลวง จังหวัดปทุมธานี
+              <br/>
+
+              โทร. 063 846 2546 และ 065 569 9961
+              <br/>
+
+              email: dr.inkjet.print@gmail.com
+
+            </div>
+
+            <div>
+
+              <div class="title">
+                ใบเสร็จรับเงิน
+              </div>
+
+              <div class="date">
+                วันที่ ${new Date().toLocaleDateString("th-TH")}
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="customer">
+
+            <div class="line">
+              ชื่อลูกค้า: ${customer || ""}
+            </div>
+
+            <div class="line">
+              เบอร์ติดต่อ: ${phone || ""}
+            </div>
+
+          </div>
+
+          <div class="tax">
+            เลขประจำตัวผู้เสียภาษี: ${taxId || ""}
+          </div>
+
+          <div class="tax">
+            ที่อยู่: ${address || ""}
+          </div>
+
+          <div class="table">
+
+            <div class="thead">
+
+              <div>รายละเอียดสินค้า</div>
+
+              <div>ขนาด</div>
+
+              <div>จำนวน</div>
+
+              <div>ราคา/หน่วย</div>
+
+              <div>รวม</div>
+
+            </div>
+
+            <div class="row">
+
+              <div>${item.name || ""}</div>
+
+              <div>${item.size || ""}</div>
+
+              <div>${item.qty || ""}</div>
+
+              <div>${item.price || ""}</div>
+
+              <div>${itemTotal}</div>
+
+            </div>
+
+          </div>
+
+          <div class="footer">
+
+            <div class="note">
+
+              <div style="font-size:42px;font-weight:bold;">
+                *หมายเหตุ
+              </div>
+
+              <div style="font-size:30px;margin-top:20px;color:red;">
+                ${note || ""}
+              </div>
+
+            </div>
+
+            <div class="right">
+
+              <div class="total">
+
+                <span>
+                  รวมทั้งสิ้น:
+                </span>
+
+                <span>
+                  ${itemTotal}
+                </span>
+
+              </div>
+
+              <div class="qr">
+
+                <img src="/img/line.png"/>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <script>
+
+          window.onload = async () => {
+
+            const canvas =
+              await html2canvas(
+                document.getElementById("invoice"),
+                {
+                  scale:2,
+                  useCORS:true,
+                  backgroundColor:"#ffffff"
+                }
+              );
+
+            const image =
+              canvas.toDataURL("image/png");
+
+            const link =
+              document.createElement("a");
+
+            link.href = image;
+
+            link.download =
+              "receipt-${new Date().getTime()}.png";
+
+            link.click();
+          };
+
+        </script>
+
+      </body>
+      </html>
+    `;
+
+    const win =
+      window.open("", "_blank");
+
+    win.document.write(html);
+
+    win.document.close();
+  };
+
+  // =========================
+  // SAVE QUOTE IMAGE
+  // =========================
+
   const saveImage2 = async () => {
 
     const element =
@@ -237,10 +580,15 @@ export default function App() {
     link.href = image;
 
     link.download =
-      `invoice2-${Date.now()}.png`;
+      `quote-${Date.now()}.png`;
 
     link.click();
   };
+
+  // =========================
+  // SAVE TO SHEET
+  // =========================
+
   const saveToSheet = async () => {
 
     const payload = {
@@ -283,6 +631,10 @@ export default function App() {
       alert("เกิดข้อผิดพลาด");
     }
   };
+
+  // =========================
+  // BACKUP
+  // =========================
 
   const backup = async () => {
 
@@ -332,9 +684,6 @@ export default function App() {
     }
   };
 
-  
-  
-
   // =========================
   // EMPTY ROWS
   // =========================
@@ -367,40 +716,40 @@ export default function App() {
           <div className="flex flex-wrap gap-2 w-full md:w-auto">
 
             <button
-              className="bg-white/20 px-4 py-2 rounded-xl w-full sm:w-auto"
+              className="bg-white/20 px-4 py-2 rounded-xl w-full sm:w-auto hover:bg-white/30"
               onClick={saveImage}
             >
-              Save PNG
+              💾 Save ใบสั่งซื้อ
             </button>
-                <button
-      className="bg-green-500 px-4 py-2 rounded-xl text-white"
-      onClick={() => {
-        saveToSheet();
-        backup();
-      }}
-    >
-      Save Sheet
-    </button>
-    <button
-      className="bg-gray-500 px-4 py-2 rounded-xl text-white"
-      onClick={() => {
-        saveImage2();
-        backup();
-      }}
-    >
-      Save ใบเสนอราคา
-    </button>
 
-    <button
-      className="bg-purple-500 px-4 py-2 rounded-xl text-white"
-      onClick={() => {
-        window.location.href = '/admin';
-      }}
-    >
-      ใบเสร็จ
-    </button>
+            <button
+              className="bg-green-500 px-4 py-2 rounded-xl text-white hover:bg-green-600 w-full sm:w-auto"
+              onClick={() => {
+                saveToSheet();
+                backup();
+              }}
+            >
+              📊 Save Sheet
+            </button>
 
+            <button
+              className="bg-gray-500 px-4 py-2 rounded-xl text-white hover:bg-gray-600 w-full sm:w-auto"
+              onClick={() => {
+                saveImage2();
+                backup();
+              }}
+            >
+              📄 Save ใบเสนอราคา
+            </button>
 
+            <button
+              className="bg-purple-500 px-4 py-2 rounded-xl text-white hover:bg-purple-600 w-full sm:w-auto"
+              onClick={() => {
+                window.location.href = '/admin';
+              }}
+            >
+              history
+            </button>
 
           </div>
 
@@ -412,7 +761,7 @@ export default function App() {
 
       <div className="p-3 md:p-6 grid xl:grid-cols-2 gap-6">
 
-        {/* LEFT */}
+        {/* LEFT - FORM */}
 
         <div className="bg-white rounded-3xl shadow-xl p-4 md:p-6">
 
@@ -420,7 +769,7 @@ export default function App() {
             สร้างใบสั่งซื้อสินค้า
           </h2>
 
-          {/* CUSTOMER */}
+          {/* CUSTOMER INFO */}
 
           <div className="space-y-4">
 
@@ -431,7 +780,7 @@ export default function App() {
               onChange={(e) =>
                 setCustomer(e.target.value)
               }
-              className="w-full border p-3 md:p-4 rounded-xl"
+              className="w-full border p-3 md:p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
 
             <input
@@ -441,7 +790,7 @@ export default function App() {
               onChange={(e) =>
                 setPhone(e.target.value)
               }
-              className="w-full border p-3 md:p-4 rounded-xl"
+              className="w-full border p-3 md:p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
 
             <input
@@ -451,25 +800,25 @@ export default function App() {
               onChange={(e) =>
                 setTaxId(e.target.value)
               }
-              className="w-full border p-3 md:p-4 rounded-xl"
+              className="w-full border p-3 md:p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
+
             <textarea
-  placeholder="ที่อยู่"
-  value={address}
-  onChange={(e) =>
-    setAddress(e.target.value)
-  }
-  className="w-full border p-3 md:p-4 rounded-xl min-h-[100px]"
-/>
+              placeholder="ที่อยู่"
+              value={address}
+              onChange={(e) =>
+                setAddress(e.target.value)
+              }
+              className="w-full border p-3 md:p-4 rounded-xl min-h-[100px] focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
 
             <textarea
               placeholder="หมายเหตุ"
               value={note}
               onChange={(e) =>
                 setNote(e.target.value)
-               
               }
-              className="w-full border p-3 md:p-4 rounded-xl min-h-[120px]"
+              className="w-full border p-3 md:p-4 rounded-xl min-h-[120px] focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
 
           </div>
@@ -490,7 +839,7 @@ export default function App() {
                 <div className="relative">
 
                   <input
-                    className="border p-3 rounded-xl w-full"
+                    className="border p-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="รายละเอียดสินค้า"
                     value={item.name}
                     onChange={(e) =>
@@ -541,7 +890,7 @@ export default function App() {
 
                   <input
                     type="text"
-                    className="border p-3 rounded-xl"
+                    className="border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="ขนาด"
                     value={item.size}
                     onChange={(e) =>
@@ -557,7 +906,7 @@ export default function App() {
 
                   <input
                     type="number"
-                    className="border p-3 rounded-xl"
+                    className="border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="จำนวน"
                     value={item.qty}
                     onChange={(e) =>
@@ -573,7 +922,7 @@ export default function App() {
 
                   <input
                     type="number"
-                    className="border p-3 rounded-xl"
+                    className="border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="ราคา/หน่วย"
                     value={item.price}
                     onChange={(e) =>
@@ -599,12 +948,12 @@ export default function App() {
                     </div>
 
                     <button
-                      className="text-red-500 text-xl"
+                      className="text-red-500 text-xl hover:text-red-700"
                       onClick={() =>
                         removeItem(index)
                       }
                     >
-                      
+                      ✕
                     </button>
 
                   </div>
@@ -618,7 +967,7 @@ export default function App() {
             {/* ADD ITEM */}
 
             <button
-              className="w-full border-2 border-dashed border-purple-400 p-4 rounded-xl text-purple-700"
+              className="w-full border-2 border-dashed border-purple-400 p-4 rounded-xl text-purple-700 hover:bg-purple-50"
               onClick={addItem}
             >
               + เพิ่มรายการสินค้า
@@ -628,7 +977,7 @@ export default function App() {
 
         </div>
 
-        {/* RIGHT */}
+        {/* RIGHT - PREVIEW */}
 
         <div className="bg-white rounded-3xl shadow-xl p-2 md:p-6 overflow-auto">
 
@@ -641,15 +990,13 @@ export default function App() {
 
             <div className="flex justify-between items-start">
 
-            <img
-                  src="/img/5.png"
-                  
-                  width="200"
-                  alt=""
-                />
+              <img
+                src="/img/5.png"
+                width="200"
+                alt="Logo"
+              />
+
               <div>
-
-
 
                 <div className="mt-4 text-[15px] leading-8">
 
@@ -664,7 +1011,7 @@ export default function App() {
 
                   โทร. 063 846 2546 และ 065 569 9961
                   <br />
-                   email: dr.inkjet.print@gmail.com
+                  email: dr.inkjet.print@gmail.com
                 </div>
 
               </div>
@@ -677,7 +1024,7 @@ export default function App() {
 
                 <div className="mt-5 text-xl">
                   วันที่{" "}
-                  {new Date().toLocaleDateString()}
+                  {new Date().toLocaleDateString("th-TH")}
                 </div>
 
               </div>
@@ -699,15 +1046,12 @@ export default function App() {
             </div>
 
             <div className="mt-5 text-xl border-b-2 pb-2">
-              เลขประจำตัวผู้เสียภาษี:
-              {" "}
-              {taxId}
+              เลขประจำตัวผู้เสียภาษี: {taxId}
             </div>
+
             <div className="mt-5 text-xl border-b-2 pb-2 whitespace-pre-wrap">
-  ที่อยู่:
-  {" "}
-  {address}
-</div>
+              ที่อยู่: {address}
+            </div>
 
             {/* TABLE */}
 
@@ -796,118 +1140,112 @@ export default function App() {
 
             </div>
 
-{/* FOOTER */}
+            {/* FOOTER */}
 
-<div className="flex justify-between mt-10 gap-10">
+            <div className="flex justify-between mt-10 gap-10">
 
-  {/* LEFT */}
+              {/* LEFT */}
 
-  <div className="w-[55%] flex flex-col justify-between">
+              <div className="w-[55%] flex flex-col justify-between">
 
-    {/* NOTE */}
+                {/* NOTE */}
 
-    <div>
+                <div>
 
-      <div className="text-2xl font-bold">
-        *หมายเหตุ
-      </div>
+                  <div className="text-2xl font-bold">
+                    *หมายเหตุ
+                  </div>
 
-      <div className="mt-3 text-xl whitespace-pre-wrap text-red-600 font-bold">
-  {note}
-</div>
+                  <div className="mt-3 text-xl whitespace-pre-wrap text-red-600 font-bold">
+                    {note}
+                  </div>
 
-    </div>
+                </div>
 
-    {/* BANK */}
+                {/* BANK */}
 
-    <div className="mt-16 border rounded-2xl p-4 flex items-center gap-4">
+                <div className="mt-16 border rounded-2xl p-4 flex items-center gap-4">
 
-      <img
-        src="/img/Logo_GSB.png"
-        className="w-[80px] h-[80px] object-contain"
-        alt=""
-      />
+                  <img
+                    src="/img/Logo_GSB.png"
+                    className="w-[80px] h-[80px] object-contain"
+                    alt="Bank Logo"
+                  />
 
-      <div>
+                  <div>
 
-        <div className="text-2xl font-bold">
-          ธนาคารออมสิน
-        </div>
+                    <div className="text-2xl font-bold">
+                      ธนาคารออมสิน
+                    </div>
 
-        <div className="text-xl mt-1">
-          เลขบัญชี: 020480393527
-        </div>
+                    <div className="text-xl mt-1">
+                      เลขบัญชี: 020480393527
+                    </div>
 
-        <div className="text-xl">
-          ชื่อบัญชี: นาย ปัญญาวิศิษฐ์ สุริสุข
-        </div>
+                    <div className="text-xl">
+                      ชื่อบัญชี: นาย ปัญญาวิศิษฐ์ สุริสุข
+                    </div>
 
-      </div>
+                  </div>
 
-    </div>
+                </div>
 
-  </div>
+              </div>
 
- {/* RIGHT */}
+              {/* RIGHT */}
 
-<div className="w-[45%]">
+              <div className="w-[45%]">
 
-{/* TOTAL */}
+                {/* TOTAL */}
 
-<div className="border-2 border-black rounded-full px-6 py-3 text-2xl font-bold flex justify-between">
+                <div className="border-2 border-black rounded-full px-6 py-3 text-2xl font-bold flex justify-between">
 
-  <span>
-    รวมทั้งสิ้น:
-  </span>
+                  <span>
+                    รวมทั้งสิ้น:
+                  </span>
 
-  <span>
-    {total}
-  </span>
+                  <span>
+                    {total}
+                  </span>
 
-</div>
+                </div>
 
-{/* QR */}
+                {/* QR */}
 
-<div className="flex justify-center mt-8">
+                <div className="flex justify-center mt-8">
 
-  <img
-    src="/img/6.png"
-    className="w-[420px] object-contain"
-    alt=""
-  />
+                  <img
+                    src="/img/6.png"
+                    className="w-[420px] object-contain"
+                    alt="QR Code"
+                  />
 
-</div>
+                </div>
 
-</div>
-</div>
-<div className="bg-white rounded-3xl shadow-xl p-2 md:p-6 overflow-auto">
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* QUOTE INVOICE - HIDDEN */}
 
           <div
             id="invoice2"
-            className="    bg-white
-    p-4
-    md:p-8
-    rounded-3xl
-    min-w-[800px]
-    fixed
-    -left-[99999px]
-    top-0"
-            
+            className="bg-white p-4 md:p-8 rounded-3xl min-w-[800px] fixed -left-[99999px] top-0"
           >
 
             {/* TOP */}
 
             <div className="flex justify-between items-start">
 
-            <img
-                  src="/img/5.png"
-                  
-                  width="200"
-                  alt=""
-                />
+              <img
+                src="/img/5.png"
+                width="200"
+                alt="Logo"
+              />
+
               <div>
-
-
 
                 <div className="mt-4 text-[15px] leading-8">
 
@@ -922,7 +1260,7 @@ export default function App() {
 
                   โทร. 063 846 2546 และ 065 569 9961
                   <br />
-                   email: dr.inkjet.print@gmail.com
+                  email: dr.inkjet.print@gmail.com
                 </div>
 
               </div>
@@ -935,7 +1273,7 @@ export default function App() {
 
                 <div className="mt-5 text-xl">
                   วันที่{" "}
-                  {new Date().toLocaleDateString()}
+                  {new Date().toLocaleDateString("th-TH")}
                 </div>
 
               </div>
@@ -957,15 +1295,12 @@ export default function App() {
             </div>
 
             <div className="mt-5 text-xl border-b-2 pb-2">
-              เลขประจำตัวผู้เสียภาษี:
-              {" "}
-              {taxId}
+              เลขประจำตัวผู้เสียภาษี: {taxId}
             </div>
+
             <div className="mt-5 text-xl border-b-2 pb-2 whitespace-pre-wrap">
-  ที่อยู่:
-  {" "}
-  {address}
-</div>
+              ที่อยู่: {address}
+            </div>
 
             {/* TABLE */}
 
@@ -1054,69 +1389,79 @@ export default function App() {
 
             </div>
 
-{/* FOOTER */}
+            {/* FOOTER */}
 
-<div className="flex justify-between mt-10 gap-10">
+            <div className="flex justify-between mt-10 gap-10">
 
-  {/* LEFT */}
+              {/* LEFT */}
 
-  <div className="w-[55%] flex flex-col justify-between">
+              <div className="w-[55%] flex flex-col justify-between">
 
-    {/* NOTE */}
+                {/* NOTE */}
 
-    <div>
+                <div>
 
-      <div className="text-2xl font-bold">
-        *หมายเหตุ
-      </div>
+                  <div className="text-2xl font-bold">
+                    *หมายเหตุ
+                  </div>
 
-      <div className="mt-3 text-xl whitespace-pre-wrap text-red-600 font-bold">
-  {note}
-</div>
+                  <div className="mt-3 text-xl whitespace-pre-wrap text-red-600 font-bold">
+                    {note}
+                  </div>
 
-    </div>
+                </div>
 
+              </div>
 
-  </div>
+              {/* RIGHT */}
 
- {/* RIGHT */}
+              <div className="w-[45%]">
 
-<div className="w-[45%]">
+                {/* TOTAL */}
 
-{/* TOTAL */}
+                <div className="border-2 border-black rounded-full px-6 py-3 text-2xl font-bold flex justify-between">
 
-<div className="border-2 border-black rounded-full px-6 py-3 text-2xl font-bold flex justify-between">
+                  <span>
+                    รวมทั้งสิ้น:
+                  </span>
 
-  <span>
-    รวมทั้งสิ้น:
-  </span>
+                  <span>
+                    {total}
+                  </span>
 
-  <span>
-    {total}
-  </span>
+                </div>
 
-</div>
+                {/* QR */}
 
-{/* QR */}
+                <div className="flex justify-center mt-8">
 
-<div className="flex justify-center mt-8">
+                  <img
+                    src="/img/line.png"
+                    className="w-[420px] object-contain"
+                    alt="LINE QR"
+                  />
 
-  <img
-    src="/img/line.png"
-    className="w-[420px] object-contain"
-    alt=""
-  />
+                </div>
 
-</div>
+              </div>
 
-</div>
-</div>
-</div>
-</div>
+            </div>
+
           </div>
 
         </div>
 
+      </div>
+
+      {/* SAVE RECEIPT BUTTON - FLOATING */}
+
+      <div className="fixed bottom-6 right-6">
+        <button
+          onClick={saveInvoiceImage}
+          className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full shadow-lg font-bold text-lg"
+        >
+          🧾 Save Receipt
+        </button>
       </div>
 
     </div>

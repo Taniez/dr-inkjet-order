@@ -19,6 +19,12 @@ export default function Admin() {
   const [search, setSearch] =
     useState("");
 
+  const [loading, setLoading] =
+    useState(false);
+
+  const [error, setError] =
+    useState(null);
+
   // =========================
   // POPUP
   // =========================
@@ -68,6 +74,9 @@ export default function Admin() {
 
   useEffect(() => {
     fetchHistory();
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(fetchHistory, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   // =========================
@@ -117,34 +126,87 @@ export default function Admin() {
 
   const fetchHistory = () => {
 
+    setLoading(true);
+    setError(null);
+
+    // Set timeout after 10 seconds
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+      setError("ไม่สามารถโหลดข้อมูลได้ (หมดเวลา) โปรดลองใหม่อีกครั้ง");
+      console.error("Fetch timeout after 10 seconds");
+    }, 10000);
+
     const oldScript =
       document.getElementById(
         "sheetScript"
       );
 
     if (oldScript) {
-
       oldScript.remove();
     }
 
     delete window.loadData;
 
     window.loadData = (data) => {
+      
+      clearTimeout(timeoutId);
+      setLoading(false);
 
-      console.log(data);
+      try {
+        console.log("✅ ข้อมูลจาก Sheet:", data);
+        console.log("📊 จำนวนรายการ:", Array.isArray(data) ? data.length : 0);
 
-      setHistory(data || []);
+        if (!data || (Array.isArray(data) && data.length === 0)) {
+          setError(null);
+          setHistory([]);
+        } else if (Array.isArray(data)) {
+          setHistory(data);
+          setError(null);
+        } else {
+          console.error("Format ข้อมูลไม่ถูกต้อง:", data);
+          setError("Format ข้อมูลไม่ถูกต้อง");
+          setHistory([]);
+        }
+      } catch (err) {
+        console.error("Error processing data:", err);
+        setError("เกิดข้อผิดพลาดในการประมวลผลข้อมูล");
+        setHistory([]);
+      }
     };
 
-    const script =
-      document.createElement("script");
+    // Error handler
+    window.loadDataError = (error) => {
+      clearTimeout(timeoutId);
+      setLoading(false);
+      console.error("API Error:", error);
+      setError("ไม่สามารถเชื่อมต่อกับ Sheet ได้ โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต");
+      setHistory([]);
+    };
 
-    script.id = "sheetScript";
+    try {
+      const script =
+        document.createElement("script");
 
-    script.src =
-      `https://script.google.com/macros/s/AKfycby2e5opqSOVWTBE2yu-mAFsTT3JN1maBZyWAQjda9yVHSn_-o5CrJO2tIHyYeWGlggL/exec?callback=loadData&t=${Date.now()}`;
+      script.id = "sheetScript";
 
-    document.body.appendChild(script);
+      script.src =
+        `https://script.google.com/macros/s/AKfycby2e5opqSOVWTBE2yu-mAFsTT3JN1maBZyWAQjda9yVHSn_-o5CrJO2tIHyYeWGlggL/exec?callback=loadData&t=${Date.now()}`;
+
+      script.onerror = () => {
+        clearTimeout(timeoutId);
+        setLoading(false);
+        setError("ไม่สามารถโหลดสคริปต์ได้ โปรดลองใหม่อีกครั้ง");
+        console.error("Script loading error");
+      };
+
+      document.body.appendChild(script);
+
+    } catch (err) {
+      clearTimeout(timeoutId);
+      setLoading(false);
+      setError("เกิดข้อผิดพลาดที่ไม่คาดคิด");
+      console.error("Exception:", err);
+    }
   };
 
   // =========================
@@ -608,18 +670,54 @@ margin-top:30px;
 
         <div className="flex flex-col md:flex-row justify-between gap-4 md:items-center mb-6">
 
-          <div className="text-2xl md:text-3xl font-bold">
-            ประวัติรายการทั้งหมด (ใบเสร็จ)
+          <div>
+            <div className="text-2xl md:text-3xl font-bold">
+              ประวัติรายการทั้งหมด (ใบเสร็จ)
+            </div>
+            {history.length > 0 && !loading && (
+              <div className="text-sm text-gray-500 mt-1">
+                รวม {history.length} รายการ
+              </div>
+            )}
           </div>
 
           <button
             onClick={fetchHistory}
-            className="bg-blue-500 text-white px-5 py-3 rounded-xl hover:bg-blue-600"
+            className="bg-blue-500 text-white px-5 py-3 rounded-xl hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            disabled={loading}
           >
-            🔄 รีโหลด
+            {loading ? "⏳ กำลังโหลด..." : "🔄 รีโหลด"}
           </button>
 
         </div>
+
+        {/* LOADING */}
+        {loading && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-2xl">
+            <div className="flex items-center gap-3">
+              <div className="animate-spin">⏳</div>
+              <span className="text-blue-700 font-semibold">กำลังโหลดข้อมูล...</span>
+            </div>
+          </div>
+        )}
+
+        {/* ERROR */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-xl">⚠️</span>
+                <span className="text-red-700 font-semibold">{error}</span>
+              </div>
+              <button
+                onClick={() => setError(null)}
+                className="text-red-500 hover:text-red-700 text-xl"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="mb-6">
 
@@ -631,7 +729,8 @@ margin-top:30px;
               onChange={(e) =>
                 setSearch(e.target.value)
               }
-              className="w-full border p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+              disabled={loading}
             />
             {search && (
               <button
@@ -651,8 +750,18 @@ margin-top:30px;
 
         </div>
 
+        {/* EMPTY STATE */}
+        {!loading && history.length === 0 && !error && (
+          <div className="p-10 bg-gray-50 rounded-2xl text-center">
+            <div className="text-4xl mb-3">📭</div>
+            <p className="text-gray-600 font-semibold">ยังไม่มีข้อมูล</p>
+            <p className="text-gray-500 text-sm mt-1">โปรดรอสักครู่หรือลองกดปุ่มรีโหลด</p>
+          </div>
+        )}
+
         {/* DESKTOP TABLE VIEW */}
-        <div className="hidden md:block overflow-auto rounded-2xl border">
+        {history.length > 0 && (
+        <div className="hidden md:block overflow-auto rounded-2xl border" style={{ opacity: loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto' }}>
 
         <table className="w-full text-xs md:text-sm min-w-[1000px]">
 
@@ -880,6 +989,7 @@ margin-top:30px;
           </table>
 
         </div>
+        )}
 
         {/* MOBILE CARD VIEW */}
         <div className="md:hidden space-y-3">
